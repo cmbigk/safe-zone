@@ -96,82 +96,82 @@ services:
       - ecommerce-network
     restart: on-failure
 
-  # Product Microservice
-  product-service:
-    build:
-      context: ./product-service
-      dockerfile: Dockerfile
-    container_name: product-service
-    ports:
-      - "8082:8082"
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin123@mongodb-product:27017/productdb?authSource=admin
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SERVER_PORT: 8082
-      USER_SERVICE_URL: http://user-service:8081
-    depends_on:
-      - mongodb-product
-      - kafka
-      - user-service
-    networks:
-      - ecommerce-network
-    restart: on-failure
+  # Product Microservice - TO BE IMPLEMENTED
+  # product-service:
+  #   build:
+  #     context: ./product-service
+  #     dockerfile: Dockerfile
+  #   container_name: product-service
+  #   ports:
+  #     - "8082:8082"
+  #   environment:
+  #     SPRING_DATA_MONGODB_URI: mongodb://admin:admin123@mongodb-product:27017/productdb?authSource=admin
+  #     SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+  #     SERVER_PORT: 8082
+  #     USER_SERVICE_URL: http://user-service:8081
+  #   depends_on:
+  #     - mongodb-product
+  #     - kafka
+  #     - user-service
+  #   networks:
+  #     - ecommerce-network
+  #   restart: on-failure
 
-  # Media Microservice
-  media-service:
-    build:
-      context: ./media-service
-      dockerfile: Dockerfile
-    container_name: media-service
-    ports:
-      - "8083:8083"
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin123@mongodb-media:27017/mediadb?authSource=admin
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SERVER_PORT: 8083
-      MAX_FILE_SIZE: 2MB
-    depends_on:
-      - mongodb-media
-      - kafka
-    networks:
-      - ecommerce-network
-    volumes:
-      - media-uploads:/app/uploads
-    restart: on-failure
+  # Media Microservice - TO BE IMPLEMENTED
+  # media-service:
+  #   build:
+  #     context: ./media-service
+  #     dockerfile: Dockerfile
+  #   container_name: media-service
+  #   ports:
+  #     - "8083:8083"
+  #   environment:
+  #     SPRING_DATA_MONGODB_URI: mongodb://admin:admin123@mongodb-media:27017/mediadb?authSource=admin
+  #     SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+  #     SERVER_PORT: 8083
+  #     MAX_FILE_SIZE: 2MB
+  #   depends_on:
+  #     - mongodb-media
+  #     - kafka
+  #   networks:
+  #     - ecommerce-network
+  #   volumes:
+  #     - media-uploads:/app/uploads
+  #   restart: on-failure
 
-  # API Gateway
-  api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    environment:
-      SERVER_PORT: 8080
-      USER_SERVICE_URL: http://user-service:8081
-      PRODUCT_SERVICE_URL: http://product-service:8082
-      MEDIA_SERVICE_URL: http://media-service:8083
-    depends_on:
-      - user-service
-      - product-service
-      - media-service
-    networks:
-      - ecommerce-network
-    restart: on-failure
+  # API Gateway - TO BE IMPLEMENTED
+  # api-gateway:
+  #   build:
+  #     context: ./api-gateway
+  #     dockerfile: Dockerfile
+  #   container_name: api-gateway
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SERVER_PORT: 8080
+  #     USER_SERVICE_URL: http://user-service:8081
+  #     PRODUCT_SERVICE_URL: http://product-service:8082
+  #     MEDIA_SERVICE_URL: http://media-service:8083
+  #   depends_on:
+  #     - user-service
+  #     - product-service
+  #     - media-service
+  #   networks:
+  #     - ecommerce-network
+  #   restart: on-failure
 
-  # Angular Frontend
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - "4200:80"
-    depends_on:
-      - api-gateway
-    networks:
-      - ecommerce-network
+  # Angular Frontend - TO BE IMPLEMENTED
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: frontend
+  #   ports:
+  #     - "4200:80"
+  #   depends_on:
+  #     - api-gateway
+  #   networks:
+  #     - ecommerce-network
 
 volumes:
   mongodb-user-data:

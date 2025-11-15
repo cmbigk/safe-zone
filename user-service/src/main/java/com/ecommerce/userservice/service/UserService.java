@@ -7,7 +7,8 @@ import com.ecommerce.userservice.model.User;
 import com.ecommerce.userservice.repository.UserRepository;
 import com.ecommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +32,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    //@Autowired(required = false)
+    //private KafkaTemplate<String, String> kafkaTemplate;
     
     private static final String UPLOAD_DIR = "uploads/avatars/";
     
@@ -52,8 +54,10 @@ public class UserService {
         
         User savedUser = userRepository.save(user);
         
-        // Publish event to Kafka
-        kafkaTemplate.send("user-registered", savedUser.getId());
+        // Publish event to Kafka (disabled for testing)
+        //if (kafkaTemplate != null) {
+        //    kafkaTemplate.send("user-registered", savedUser.getId());
+        //}
         
         String token = jwtTokenProvider.generateToken(savedUser.getEmail());
         
