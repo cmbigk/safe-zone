@@ -1,0 +1,37 @@
+<div class="products-container">
+  <div class="products-header">
+    <h1>All Products</h1>
+    <button *ngIf="authService.isSeller()" (click)="goToDashboard()" class="btn-dashboard">
+      Go to Dashboard
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading products...</div>
+  
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <div class="products-grid" *ngIf="!loading && products.length > 0">
+    <div class="product-card" *ngFor="let product of products">
+      <div class="product-image">
+        <img [src]="getProductImage(product)" [alt]="product.name" />
+      </div>
+      <div class="product-info">
+        <h3>{{ product.name }}</h3>
+        <p class="product-category">{{ product.category }}</p>
+        <p class="product-description">{{ product.description }}</p>
+        <div class="product-footer">
+          <span class="product-price">${{ product.price.toFixed(2) }}</span>
+          <span class="product-stock">Stock: {{ product.stock }}</span>
+        </div>
+        <p class="product-seller">Seller: {{ product.sellerEmail }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && products.length === 0" class="no-products">
+    <p>No products available yet.</p>
+    <button *ngIf="authService.isSeller()" (click)="goToDashboard()" class="btn-primary">
+      Create Your First Product
+    </button>
+  </div>
+</div>

@@ -143,6 +143,69 @@ public class UserService {
         return mapToUserResponse(user);
     }
     
+    public UserResponse updateProfileById(String userId, String authenticatedEmail, UpdateProfileRequest request) {
+        // Verify the user is updating their own profile
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        
+        if (!user.getEmail().equals(authenticatedEmail)) {
+            throw new com.ecommerce.userservice.exception.UnauthorizedException(
+                "You can only update your own profile");
+        }
+        
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
+        user.setUpdatedAt(LocalDateTime.now());
+        
+        User updatedUser = userRepository.save(user);
+        
+        return mapToUserResponse(updatedUser);
+    }
+    
+    public UserResponse uploadAvatarById(String userId, String authenticatedEmail, MultipartFile file) throws IOException {
+        // Verify the user is updating their own avatar
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        
+        if (!user.getEmail().equals(authenticatedEmail)) {
+            throw new com.ecommerce.userservice.exception.UnauthorizedException(
+                "You can only update your own avatar");
+        }
+        
+        // Validate file size (2MB max)
+        if (file.getSize() > 2 * 1024 * 1024) {
+            throw new IllegalArgumentException("File size exceeds 2MB limit");
+        }
+        
+        // Validate file type
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed");
+        }
+        
+        // Create upload directory if it doesn't exist
+        Files.createDirectories(Paths.get(UPLOAD_DIR));
+        
+        // Generate unique filename
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".") 
+                ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                : "";
+        String filename = UUID.randomUUID().toString() + extension;
+        Path filepath = Paths.get(UPLOAD_DIR, filename);
+        
+        // Save file
+        Files.write(filepath, file.getBytes());
+        
+        // Update user avatar URL
+        user.setAvatarUrl("/uploads/avatars/" + filename);
+        user.setUpdatedAt(LocalDateTime.now());
+        User updatedUser = userRepository.save(user);
+        
+        return mapToUserResponse(updatedUser);
+    }
+    
     private UserResponse mapToUserResponse(User user) {
         return new UserResponse(
                 user.getId(),

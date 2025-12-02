@@ -1,0 +1,101 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Seller Dashboard</h1>
+    <div class="header-actions">
+      <button (click)="viewAllProducts()" class="btn-secondary">View All Products</button>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </div>
+
+  <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="dashboard-actions">
+    <button (click)="openCreateForm()" class="btn-primary">+ Create New Product</button>
+  </div>
+
+  <!-- Product Form Modal -->
+  <div class="modal" *ngIf="showForm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ editMode ? 'Edit Product' : 'Create New Product' }}</h2>
+        <button (click)="closeForm()" class="btn-close">&times;</button>
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Product Name *</label>
+          <input type="text" id="name" [(ngModel)]="productForm.name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea id="description" [(ngModel)]="productForm.description" name="description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price">Price *</label>
+            <input type="number" id="price" [(ngModel)]="productForm.price" name="price" min="0" step="0.01" required />
+          </div>
+
+          <div class="form-group">
+            <label for="stock">Stock *</label>
+            <input type="number" id="stock" [(ngModel)]="productForm.stock" name="stock" min="0" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <input type="text" id="category" [(ngModel)]="productForm.category" name="category" required />
+        </div>
+
+        <div class="form-group">
+          <label>Product Image (Max 2MB)</label>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+          <button type="button" (click)="uploadImage()" [disabled]="!selectedFile || uploadingImage" class="btn-upload">
+            {{ uploadingImage ? 'Uploading...' : 'Upload Image' }}
+          </button>
+          <p class="image-count" *ngIf="productForm.imageIds && productForm.imageIds.length > 0">
+            {{ productForm.imageIds.length }} image(s) uploaded
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="closeForm()" class="btn-secondary">Cancel</button>
+          <button type="submit" [disabled]="loading" class="btn-primary">
+            {{ loading ? 'Saving...' : (editMode ? 'Update' : 'Create') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Products List -->
+  <div class="products-section">
+    <h2>My Products</h2>
+    
+    <div class="products-grid" *ngIf="products.length > 0">
+      <div class="product-card" *ngFor="let product of products">
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          <p class="category">{{ product.category }}</p>
+          <p class="description">{{ product.description }}</p>
+          <div class="product-details">
+            <span class="price">${{ product.price.toFixed(2) }}</span>
+            <span class="stock">Stock: {{ product.stock }}</span>
+          </div>
+          <div class="product-actions">
+            <button (click)="openEditForm(product)" class="btn-edit">Edit</button>
+            <button (click)="deleteProduct(product.id)" class="btn-delete">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-products" *ngIf="products.length === 0">
+      <p>You haven't created any products yet.</p>
+      <button (click)="openCreateForm()" class="btn-primary">Create Your First Product</button>
+    </div>
+  </div>
+</div>

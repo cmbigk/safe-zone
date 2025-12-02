@@ -1,53 +1,74 @@
 # E-Commerce Microservices Platform
 
-A comprehensive e-commerce platform built with Spring Boot microservices architecture and Angular frontend.
+A comprehensive e-commerce platform built with **Java 21**, Spring Boot microservices, MongoDB, Kafka, and Angular.
 
-## Architecture Overview
+## 🎯 Project Status
 
-### Microservices
-1. **User Service** (Port 8081) - User authentication, registration, and profile management
-2. **Product Service** (Port 8082) - Product CRUD operations (seller-only)
-3. **Media Service** (Port 8083) - Image upload and management
-4. **API Gateway** (Port 8080) - Routes requests and handles authentication
+✅ **Backend Services Completed** (Java 21 + Spring Boot 3.2.0)  
+✅ **Docker Integration** (docker-compose with all services)  
+✅ **API Testing Guide** (comprehensive audit checklist)  
+📋 **Frontend Guide** (complete Angular implementation guide provided)  
+
+See `TODO.txt` for detailed status.
+
+## 🏗️ Architecture Overview
+
+### Microservices (All Java 21)
+1. **User Service** (Port 8081) - Authentication, registration, profile management, avatar upload
+2. **Product Service** (Port 8082) - Product CRUD with seller-only authorization
+3. **Media Service** (Port 8083) - Image upload with 2MB limit and type validation
+4. **API Gateway** (Port 8080) - Optional centralized routing _(not yet implemented)_
 
 ### Technologies
-- **Backend**: Spring Boot 3.2.0, MongoDB, Kafka, JWT
-- **Frontend**: Angular 17+
+- **Backend**: Java 21, Spring Boot 3.2.0, MongoDB, Kafka, JWT, Apache Tika
+- **Frontend**: Angular 17+ _(implementation guide provided)_
 - **Infrastructure**: Docker, Docker Compose
+- **Security**: BCrypt, JWT, Role-based access control
 
-## Features
+## ✨ Features
 
-### User Management
-- User registration as CLIENT or SELLER
-- JWT-based authentication
-- Profile management
-- Avatar upload for sellers (2MB limit)
-- Password hashing with BCrypt
+### User Management (user-service)
+- ✅ User registration as CLIENT or SELLER
+- ✅ JWT-based authentication
+- ✅ Profile management (get/update with authorization)
+- ✅ Avatar upload (2MB limit, image validation)
+- ✅ Password hashing with BCrypt
+- ✅ User can only update own profile (JWT validation)
 
-### Product Management
-- CRUD operations (sellers only)
-- Product image associations
-- Kafka events for product changes
-- Seller ownership validation
+### Product Management (product-service)
+- ✅ CRUD operations (sellers only)
+- ✅ Seller ownership validation (only owner can update/delete)
+- ✅ Product-image associations
+- ✅ Query by seller, category, or all products
+- ✅ MongoDB persistence
+- ✅ Kafka event configuration
 
-### Media Management
-- Image upload with validation
-- 2MB file size limit
-- Image type validation
-- Secure storage
+### Media Management (media-service)
+- ✅ Image upload with strict validation
+- ✅ 2MB file size limit enforced
+- ✅ File type detection using Apache Tika (not just content-type)
+- ✅ Only images allowed (JPEG, PNG, GIF, WebP)
+- ✅ MongoDB metadata storage
+- ✅ File serving endpoint
+- ✅ Product association
 
-### Security
-- HTTPS encryption
-- Role-based access control
-- Password hashing and salting
-- JWT token authentication
-- Input validation
-- Sensitive data protection
+### Security & Validation
+- ✅ BCrypt password hashing
+- ✅ JWT token authentication
+- ✅ Role-based authorization (SELLER vs CLIENT)
+- ✅ Ownership validation (users can only modify their own resources)
+- ✅ Sensitive data protection (passwords never in API responses)
+- ✅ Comprehensive input validation (Bean Validation)
+- ✅ Global exception handling with meaningful error messages
+- ✅ File upload constraints enforced
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 - Docker & Docker Compose
+- Java 21 (for local development)
+- Maven (for local development)
+- Node.js 18+ & Angular CLI (for frontend)
 - Java 17+ (for local development)
 - Node.js 18+ & npm (for frontend development)
 

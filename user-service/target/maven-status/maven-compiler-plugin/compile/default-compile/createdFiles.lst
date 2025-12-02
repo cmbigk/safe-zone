@@ -1,2 +1,2 @@
-com/ecommerce/userservice/model/UserRole.class
-com/ecommerce/userservice/dto/LoginRequest.class
+com\ecommerce\userservice\dto\LoginRequest.class
+com\ecommerce\userservice\model\UserRole.class
