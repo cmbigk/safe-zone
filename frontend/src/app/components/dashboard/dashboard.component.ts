@@ -153,8 +153,16 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
+    // Ensure price and stock are numbers and imageIds is an array
+    const productData: ProductRequest = {
+      ...this.productForm,
+      price: Number(this.productForm.price),
+      stock: Number(this.productForm.stock),
+      imageIds: this.productForm.imageIds || []
+    };
+
     if (this.editMode && this.currentProductId) {
-      this.productService.updateProduct(this.currentProductId, this.productForm).subscribe({
+      this.productService.updateProduct(this.currentProductId, productData).subscribe({
         next: () => {
           this.successMessage = 'Product updated successfully';
           this.loading = false;
@@ -167,15 +175,27 @@ export class DashboardComponent implements OnInit {
         }
       });
     } else {
-      this.productService.createProduct(this.productForm).subscribe({
+      this.productService.createProduct(productData).subscribe({
         next: () => {
           this.successMessage = 'Product created successfully';
           this.loading = false;
           this.loadMyProducts();
           this.closeForm();
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 3000);
         },
         error: (error) => {
-          this.errorMessage = error.error?.message || 'Failed to create product';
+          console.error('Product creation error:', error);
+          if (error.error && typeof error.error === 'object' && !error.error.message) {
+            // Validation errors (field-level errors)
+            const validationErrors = Object.entries(error.error)
+              .map(([field, msg]) => `${field}: ${msg}`)
+              .join(', ');
+            this.errorMessage = validationErrors || 'Validation failed';
+          } else {
+            this.errorMessage = error.error?.message || 'Failed to create product';
+          }
           this.loading = false;
         }
       });
