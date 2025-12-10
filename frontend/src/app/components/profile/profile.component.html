@@ -1,7 +1,7 @@
 <div class="profile-container">
   <div class="profile-header">
-    <button (click)="router.navigate(isSeller() ? ['/dashboard'] : ['/products'])" class="btn-back">
-      ← Back to {{ isSeller() ? 'Dashboard' : 'Products' }}
+    <button (click)="router.navigate(['/products'])" class="btn-back">
+      ← Back to Products
     </button>
     <h1>My Profile</h1>
     <span class="user-role-badge" [class.seller]="isSeller()">
