@@ -129,7 +129,7 @@ public class MediaService {
     }
     
     private MediaResponse mapToMediaResponse(Media media) {
-        String url = "/api/media/files/" + media.getFilename();
+        String url = "/api/media/files/" + media.getId();
         return new MediaResponse(
                 media.getId(),
                 media.getFilename(),

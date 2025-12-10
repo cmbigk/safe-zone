@@ -71,6 +71,17 @@ export class SellerProfileComponent implements OnInit {
     return 'assets/placeholder.jpg';
   }
 
+  getSellerAvatarUrl(): string {
+    if (this.sellerAvatar) {
+      // Convert HTTPS URLs to use proxy to avoid certificate errors
+      if (this.sellerAvatar.startsWith('https://localhost:8083')) {
+        return this.sellerAvatar.replace('https://localhost:8083', '');
+      }
+      return this.sellerAvatar;
+    }
+    return '';
+  }
+
   goBack(): void {
     this.router.navigate(['/products']);
   }

@@ -21,7 +21,7 @@
           <span class="product-stock">Stock: {{ product.stock }}</span>
         </div>
         <div class="product-seller-info">
-          <img *ngIf="product.sellerAvatar" [src]="product.sellerAvatar" [alt]="product.sellerName" class="seller-avatar" />
+          <img *ngIf="product.sellerAvatar" [src]="getSellerAvatar(product)" [alt]="product.sellerName" class="seller-avatar" />
           <span class="seller-name" (click)="goToSellerProfile(product.sellerId)">{{ product.sellerName }}</span>
         </div>
       </div>

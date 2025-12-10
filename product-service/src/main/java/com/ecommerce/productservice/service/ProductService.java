@@ -107,6 +107,19 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     
+    public void updateSellerInfo(String sellerEmail, String sellerName, String sellerAvatar) {
+        List<Product> products = productRepository.findBySellerEmail(sellerEmail);
+        
+        for (Product product : products) {
+            product.setSellerName(sellerName);
+            product.setSellerAvatar(sellerAvatar);
+            product.setUpdatedAt(LocalDateTime.now());
+        }
+        
+        productRepository.saveAll(products);
+        log.info("Updated seller info for {} products", products.size());
+    }
+    
     public List<ProductResponse> getProductsByCategory(String category) {
         return productRepository.findByCategory(category).stream()
                 .map(this::mapToProductResponse)

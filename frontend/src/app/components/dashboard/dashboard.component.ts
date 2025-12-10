@@ -161,7 +161,7 @@ export class DashboardComponent implements OnInit {
       price: Number(this.productForm.price),
       stock: Number(this.productForm.stock),
       imageIds: this.productForm.imageIds || [],
-      sellerName: user ? `${user.firstName} ${user.lastName}` : 'Unknown Seller',
+      sellerName: user ? `${user.firstName} ${user.lastName}`.trim() : 'Unknown Seller',
       sellerAvatar: user?.avatarUrl || null
     };
 

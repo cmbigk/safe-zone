@@ -7,6 +7,7 @@
         @if (authService.isSeller()) {
           <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         }
+        <a routerLink="/profile" routerLinkActive="active">Profile</a>
         <button (click)="logout()" class="btn-logout">Logout</button>
       } @else {
         <a routerLink="/login" routerLinkActive="active">Login</a>

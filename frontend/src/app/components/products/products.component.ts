@@ -61,4 +61,15 @@ export class ProductsComponent implements OnInit {
       this.router.navigate(['/seller', sellerId], { queryParams: { email: product.sellerEmail } });
     }
   }
+
+  getSellerAvatar(product: Product): string {
+    if (product.sellerAvatar) {
+      // Convert HTTPS URLs to use proxy to avoid certificate errors
+      if (product.sellerAvatar.startsWith('https://localhost:8083')) {
+        return product.sellerAvatar.replace('https://localhost:8083', '');
+      }
+      return product.sellerAvatar;
+    }
+    return '';
+  }
 }

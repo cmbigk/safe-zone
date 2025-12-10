@@ -68,4 +68,13 @@ public class ProductController {
         List<ProductResponse> products = productService.getProductsByCategory(category);
         return ResponseEntity.ok(products);
     }
+    
+    @PutMapping("/seller/{email}")
+    public ResponseEntity<Void> updateSellerInfo(
+            @PathVariable String email,
+            @RequestParam String sellerName,
+            @RequestParam(required = false) String sellerAvatar) {
+        productService.updateSellerInfo(email, sellerName, sellerAvatar);
+        return ResponseEntity.ok().build();
+    }
 }

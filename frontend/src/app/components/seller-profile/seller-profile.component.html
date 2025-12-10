@@ -2,7 +2,7 @@
   <div class="seller-header">
     <button (click)="goBack()" class="btn-back">← Back to Products</button>
     <div class="seller-info" *ngIf="!loading && sellerName">
-      <img *ngIf="sellerAvatar" [src]="sellerAvatar" [alt]="sellerName" class="seller-avatar-large" />
+      <img *ngIf="sellerAvatar" [src]="getSellerAvatarUrl()" [alt]="sellerName" class="seller-avatar-large" />
       <div *ngIf="!sellerAvatar" class="seller-avatar-placeholder">
         <span>{{ sellerName.charAt(0).toUpperCase() }}</span>
       </div>

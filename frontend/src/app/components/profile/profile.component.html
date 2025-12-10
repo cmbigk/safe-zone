@@ -1,0 +1,143 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <button (click)="router.navigate(isSeller() ? ['/dashboard'] : ['/products'])" class="btn-back">
+      ← Back to {{ isSeller() ? 'Dashboard' : 'Products' }}
+    </button>
+    <h1>My Profile</h1>
+    <span class="user-role-badge" [class.seller]="isSeller()">
+      {{ isSeller() ? 'SELLER' : 'CLIENT' }}
+    </span>
+  </div>
+
+  <div class="profile-content">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-display">
+        <img *ngIf="getAvatarUrl()" [src]="getAvatarUrl()" [alt]="profileForm.firstName" class="profile-avatar" />
+        <div *ngIf="!getAvatarUrl()" class="avatar-placeholder">
+          <span>{{ getInitials() }}</span>
+        </div>
+      </div>
+      
+      <div *ngIf="editMode" class="avatar-upload">
+        <label for="avatar" class="btn-upload">
+          <input
+            type="file"
+            id="avatar"
+            (change)="onAvatarSelected($event)"
+            accept="image/*"
+            style="display: none;"
+          />
+          Change Avatar
+        </label>
+        <p class="upload-hint">Max 2MB (JPEG, PNG, GIF, WebP)</p>
+      </div>
+    </div>
+
+    <!-- Profile Information -->
+    <div class="profile-info">
+      <div class="info-header">
+        <h2>Personal Information</h2>
+        <button 
+          *ngIf="!editMode" 
+          (click)="toggleEditMode()" 
+          class="btn-edit">
+          Edit Profile
+        </button>
+      </div>
+
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <form (ngSubmit)="updateProfile()" class="profile-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input
+              type="text"
+              id="firstName"
+              [(ngModel)]="profileForm.firstName"
+              name="firstName"
+              [disabled]="!editMode"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input
+              type="text"
+              id="lastName"
+              [(ngModel)]="profileForm.lastName"
+              name="lastName"
+              [disabled]="!editMode"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="profileForm.email"
+            name="email"
+            disabled
+            required
+          />
+          <small class="field-note">Email cannot be changed</small>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input
+            type="tel"
+            id="phone"
+            [(ngModel)]="profileForm.phone"
+            name="phone"
+            [disabled]="!editMode"
+            placeholder="Your phone number (optional)"
+          />
+        </div>
+
+        <div *ngIf="editMode" class="form-actions">
+          <button 
+            type="button" 
+            (click)="toggleEditMode()" 
+            class="btn-cancel"
+            [disabled]="loading">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save"
+            [disabled]="loading || uploadingAvatar">
+            {{ loading ? 'Saving...' : uploadingAvatar ? 'Uploading...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Additional Info for Sellers -->
+  <div *ngIf="isSeller()" class="seller-stats">
+    <h3>Seller Dashboard</h3>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Account Type</span>
+        <span class="stat-value">Seller Account</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Member Since</span>
+        <span class="stat-value">{{ user?.createdAt | date:'mediumDate' }}</span>
+      </div>
+    </div>
+    <a routerLink="/dashboard" class="btn-dashboard">Go to Dashboard →</a>
+  </div>
+</div>
