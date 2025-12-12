@@ -67,7 +67,12 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.json",
+            "ssl": true,
+            "sslCert": "ssl/localhost-cert.pem",
+            "sslKey": "ssl/localhost-key.pem",
+            "host": "localhost",
+            "port": 4200
           },
           "configurations": {
             "production": {
