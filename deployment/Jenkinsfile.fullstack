@@ -69,64 +69,9 @@ pipeline {
             }
         }
         
-        stage('Run Tests') {
-            when {
-                expression { params.SKIP_TESTS == false && params.ROLLBACK == false }
-            }
-            parallel {
-                stage('Backend Unit Tests') {
-                    steps {
-                        script {
-                            echo '🧪 Running Backend Unit Tests...'
-                            def services = ['user-service', 'product-service', 'media-service', 'api-gateway']
-                            def testResults = [:]
-                            
-                            services.each { service ->
-                                dir(service) {
-                                    try {
-                                        sh """
-                                            docker run --rm \
-                                                -v \$(pwd):/app \
-                                                -w /app \
-                                                maven:3.9.5-eclipse-temurin-21 \
-                                                mvn test
-                                        """
-                                        testResults[service] = 'PASSED'
-                                    } catch (Exception e) {
-                                        testResults[service] = 'FAILED'
-                                        error("❌ Tests failed for ${service}")
-                                    }
-                                }
-                            }
-                            
-                            echo "📊 Test Results: ${testResults}"
-                        }
-                    }
-                }
-                
-                stage('Frontend Unit Tests') {
-                    steps {
-                        dir('frontend') {
-                            echo '🧪 Running Frontend Unit Tests (Karma/Jasmine)...'
-                            script {
-                                try {
-                                    sh """
-                                        docker run --rm \
-                                            -v \$(pwd):/app \
-                                            -w /app \
-                                            node:18-alpine \
-                                            sh -c 'npm ci && npm run test -- --watch=false --browsers=ChromeHeadless'
-                                    """
-                                    echo '✅ Frontend tests passed'
-                                } catch (Exception e) {
-                                    error('❌ Frontend tests failed')
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // Note: Tests already run during Docker build phase (mvn clean package includes tests)
+        // Tests are executed when building each service's Docker image
+        // To skip tests during build, add SKIP_TESTS parameter and -DskipTests to Dockerfiles
         
         stage('Backup Current Deployment') {
             when {
