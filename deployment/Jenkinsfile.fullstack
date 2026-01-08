@@ -148,6 +148,7 @@ pipeline {
                             --network buy-01_default \
                             -p 8081:8081 \
                             -e SPRING_PROFILES_ACTIVE=${ENVIRONMENT} \
+                            -e SSL_ENABLED=false \
                             ecommerce/user-service:${BUILD_NUMBER}
                     '''
                     
@@ -159,6 +160,7 @@ pipeline {
                             --network buy-01_default \
                             -p 8082:8082 \
                             -e SPRING_PROFILES_ACTIVE=${ENVIRONMENT} \
+                            -e SSL_ENABLED=false \
                             ecommerce/product-service:${BUILD_NUMBER}
                     '''
                     
@@ -170,6 +172,7 @@ pipeline {
                             --network buy-01_default \
                             -p 8083:8083 \
                             -e SPRING_PROFILES_ACTIVE=${ENVIRONMENT} \
+                            -e SSL_ENABLED=false \
                             ecommerce/media-service:${BUILD_NUMBER}
                     '''
                     
@@ -181,6 +184,7 @@ pipeline {
                             --network buy-01_default \
                             -p 8080:8080 \
                             -e SPRING_PROFILES_ACTIVE=${ENVIRONMENT} \
+                            -e SSL_ENABLED=false \
                             ecommerce/api-gateway:${BUILD_NUMBER}
                     '''
                     
