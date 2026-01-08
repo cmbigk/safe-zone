@@ -22,3 +22,51 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Build artifacts
+target/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Node modules and build
+node_modules/
+dist/
+.angular/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jenkins data (should not be in source control)
+deployment/jenkins-data/*
+!deployment/jenkins-data/.gitkeep
+
+# User uploads
+user-service/uploads/avatars/*
+!user-service/uploads/avatars/.gitkeep
+
+# Temp files
+*.tmp
+*.bak
+*~
+
+# SSL certificates (security)
+*.p12
+*.jks
+*.key
+*.crt
+*.pem
+
+# Environment files
+.env
+.env.local

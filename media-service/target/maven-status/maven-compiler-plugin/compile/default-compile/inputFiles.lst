@@ -1,9 +1,0 @@
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/dto/MediaResponse.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/exception/GlobalExceptionHandler.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/repository/MediaRepository.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/model/Media.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/service/MediaService.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/MediaServiceApplication.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/exception/ErrorResponse.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/exception/ResourceNotFoundException.java
-/Users/eliza.john/Desktop/buy-01/media-service/src/main/java/com/ecommerce/mediaservice/controller/MediaController.java
