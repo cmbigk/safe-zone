@@ -13,10 +13,12 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - ./jenkins-data:/var/jenkins_data
+      - ./jenkins-config/jenkins.yaml:/var/jenkins_home/casc.yaml
       - ../:/workspace
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - DOCKER_HOST=unix:///var/run/docker.sock
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
     networks:
       - jenkins-network
       - buy-01_default  # Connect to main app network
