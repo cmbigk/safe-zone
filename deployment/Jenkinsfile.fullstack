@@ -556,8 +556,7 @@ pipeline {
                     )
                 } catch (Exception e) {
                     echo "⚠️ Slack notification failed: ${e.message}"
-                    echo "💡 Install Slack Notification Plugin in Jenkins
-                    echo "⚠️ Slack notification failed: ${e.message}"
+                    echo "💡 Install Slack Notification Plugin in Jenkins"
                 }
             }
         }
