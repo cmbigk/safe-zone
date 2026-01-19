@@ -406,15 +406,17 @@ pipeline {
                 echo message
                 
                 // Email notification - Configure SMTP in Jenkins Global Settings
+                // Requires Email Extension Plugin (or use basic mail step)
                 try {
-                    emailext (
+                    mail (
                         subject: "✅ Build #${BUILD_NUMBER} Successful - ${params.ENVIRONMENT}",
                         body: message,
-                        to: '${env.BUILD_NOTIFICATION_EMAIL ?: "team@example.com"}',
+                        to: env.BUILD_NOTIFICATION_EMAIL ?: 'team@example.com',
                         mimeType: 'text/plain'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Email notification failed: ${e.message}"
+                    echo "💡 Install Email Extension Plugin or configure SMTP in Jenkins"
                 }
                 
                 // Slack notification (requires Slack plugin)
@@ -422,12 +424,13 @@ pipeline {
                     slackSend (
                         color: 'good',
                         message: message,
-                        channel: '${env.SLACK_CHANNEL ?: "#deployments"}',
-                        teamDomain: '${env.SLACK_TEAM ?: "your-team"}',
+                        channel: env.SLACK_CHANNEL ?: '#deployments',
+                        teamDomain: env.SLACK_TEAM ?: 'your-team',
                         tokenCredentialId: 'slack-token'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Slack notification failed: ${e.message}"
+                    echo "💡 Install Slack Notification Plugin in Jenkins"
                 }
             }
         }
@@ -481,17 +484,17 @@ pipeline {
                 echo message
                 
                 // Email notification with log attachment
+                // Requires Email Extension Plugin (or use basic mail step)
                 try {
-                    emailext (
+                    mail (
                         subject: "❌ Build #${BUILD_NUMBER} Failed - ${failedStage}",
-                        body: message,
-                        to: '${env.BUILD_NOTIFICATION_EMAIL ?: "team@example.com"}',
-                        attachLog: true,
-                        compressLog: true,
+                        body: message + "\n\nCheck console: ${env.BUILD_URL}console",
+                        to: env.BUILD_NOTIFICATION_EMAIL ?: 'team@example.com',
                         mimeType: 'text/plain'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Email notification failed: ${e.message}"
+                    echo "💡 Install Email Extension Plugin or configure SMTP in Jenkins"
                 }
                 
                 // Slack notification for failures
@@ -499,12 +502,13 @@ pipeline {
                     slackSend (
                         color: 'danger',
                         message: message,
-                        channel: '${env.SLACK_CHANNEL ?: "#deployments"}',
-                        teamDomain: '${env.SLACK_TEAM ?: "your-team"}',
+                        channel: env.SLACK_CHANNEL ?: '#deployments',
+                        teamDomain: env.SLACK_TEAM ?: 'your-team',
                         tokenCredentialId: 'slack-token'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Slack notification failed: ${e.message}"
+                    echo "💡 Install Slack Notification Plugin in Jenkins"
                 }
                 
                 // Automatic rollback on deployment failure
@@ -546,12 +550,13 @@ pipeline {
                 try {
                     slackSend(
                         color: 'warning',
-                        message: unstableMessage,
-                        channel: '${env.SLACK_CHANNEL ?: "#deployments"}',
-                        teamDomain: '${env.SLACK_TEAM ?: "your-team"}',
+                        message: env.SLACK_CHANNEL ?: '#deployments',
+                        teamDomain: env.SLACK_TEAM ?: 'your-team',
                         tokenCredentialId: 'slack-token'
                     )
                 } catch (Exception e) {
+                    echo "⚠️ Slack notification failed: ${e.message}"
+                    echo "💡 Install Slack Notification Plugin in Jenkins
                     echo "⚠️ Slack notification failed: ${e.message}"
                 }
             }
