@@ -42,16 +42,13 @@ module.exports = function(config) {
     browsers: ['Chrome'],
     restartOnFileChange: true,
     customLaunchers: {
-      ChromeHeadlessCI: {
-        base: 'Chrome',
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
         flags: [
-          '--headless',
           '--no-sandbox',
+          '--disable-setuid-sandbox',
           '--disable-gpu',
-          '--disable-dev-shm-usage',
-          '--disable-software-rasterizer',
-          '--disable-extensions',
-          '--disable-setuid-sandbox'
+          '--disable-dev-shm-usage'
         ]
       }
     }
