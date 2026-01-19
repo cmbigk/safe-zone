@@ -54,7 +54,7 @@ docker exec jenkins-ci cat /var/jenkins_home/secrets/initialAdminPassword
 ### 3. Complete Jenkins Setup Wizard
 
 1. Open http://localhost:8090
-2. blah
+2. Enter the admin password
 3. Install suggested plugins
 4. Create admin user (or use default: admin/admin123)
 5. Set Jenkins URL: `http://localhost:8090`
