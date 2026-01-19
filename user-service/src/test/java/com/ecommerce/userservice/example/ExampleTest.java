@@ -103,7 +103,7 @@ public class ExampleTest {
     @DisplayName("Should validate array operations")
     public void testArrayOperations() {
         // Arrange
-        int[] numbers = {0, 2, 3, 4, 5};
+        int[] numbers = {1, 2, 3, 4, 5};
         
         // Assert
         assertEquals(5, numbers.length, "Array should have 5 elements");
