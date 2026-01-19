@@ -5,6 +5,16 @@ pipeline {
         PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
         DOCKER_NETWORK = "buy-01_default"
         BACKUP_TAG = "backup-${BUILD_NUMBER}"
+        
+        // Email/Slack notification settings (configure in Jenkins Global Settings)
+        BUILD_NOTIFICATION_EMAIL = "${env.BUILD_NOTIFICATION_EMAIL ?: ''}"
+        SLACK_CHANNEL = "${env.SLACK_CHANNEL ?: '#deployments'}"
+        SLACK_TEAM = "${env.SLACK_TEAM ?: ''}"
+        
+        // Credentials (use Jenkins Credentials Store)
+        // Example: GITHUB_CREDS = credentials('github-credentials')
+        // Example: DB_PASSWORD = credentials('database-password')
+        // Example: API_KEY = credentials('api-key-secret')
     }
     
     parameters {
@@ -395,19 +405,30 @@ pipeline {
                 
                 echo message
                 
-                // Email notification (configure in Jenkins)
-                // emailext (
-                //     subject: "✅ Build #${BUILD_NUMBER} Successful",
-                //     body: message,
-                //     to: 'team@example.com'
-                // )
+                // Email notification - Configure SMTP in Jenkins Global Settings
+                try {
+                    emailext (
+                        subject: "✅ Build #${BUILD_NUMBER} Successful - ${params.ENVIRONMENT}",
+                        body: message,
+                        to: '${env.BUILD_NOTIFICATION_EMAIL ?: "team@example.com"}',
+                        mimeType: 'text/plain'
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ Email notification failed: ${e.message}"
+                }
                 
                 // Slack notification (requires Slack plugin)
-                // slackSend (
-                //     color: 'good',
-                //     message: message,
-                //     channel: '#deployments'
-                // )
+                try {
+                    slackSend (
+                        color: 'good',
+                        message: message,
+                        channel: '${env.SLACK_CHANNEL ?: "#deployments"}',
+                        teamDomain: '${env.SLACK_TEAM ?: "your-team"}',
+                        tokenCredentialId: 'slack-token'
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ Slack notification failed: ${e.message}"
+                }
             }
         }
         
@@ -459,20 +480,32 @@ pipeline {
                 
                 echo message
                 
-                // Email notification
-                // emailext (
-                //     subject: "❌ Build #${BUILD_NUMBER} Failed - ${failedStage}",
-                //     body: message,
-                //     to: 'team@example.com',
-                //     attachLog: true
-                // )
+                // Email notification with log attachment
+                try {
+                    emailext (
+                        subject: "❌ Build #${BUILD_NUMBER} Failed - ${failedStage}",
+                        body: message,
+                        to: '${env.BUILD_NOTIFICATION_EMAIL ?: "team@example.com"}',
+                        attachLog: true,
+                        compressLog: true,
+                        mimeType: 'text/plain'
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ Email notification failed: ${e.message}"
+                }
                 
-                // Slack notification
-                // slackSend (
-                //     color: 'danger',
-                //     message: message,
-                //     channel: '#deployments'
-                // )
+                // Slack notification for failures
+                try {
+                    slackSend (
+                        color: 'danger',
+                        message: message,
+                        channel: '${env.SLACK_CHANNEL ?: "#deployments"}',
+                        teamDomain: '${env.SLACK_TEAM ?: "your-team"}',
+                        tokenCredentialId: 'slack-token'
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ Slack notification failed: ${e.message}"
+                }
                 
                 // Automatic rollback on deployment failure
                 if (failedStage.contains('Deploy') || failedStage.contains('Health Check')) {
@@ -509,7 +542,18 @@ pipeline {
                 
                 echo unstableMessage
                 
-                // slackSend(color: 'warning', message: unstableMessage, channel: '#deployments')
+                // Slack notification for unstable builds
+                try {
+                    slackSend(
+                        color: 'warning',
+                        message: unstableMessage,
+                        channel: '${env.SLACK_CHANNEL ?: "#deployments"}',
+                        teamDomain: '${env.SLACK_TEAM ?: "your-team"}',
+                        tokenCredentialId: 'slack-token'
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ Slack notification failed: ${e.message}"
+                }
             }
         }
         

@@ -8,7 +8,8 @@ module.exports = function(config) {
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
-      require('karma-junit-reporter')
+      require('karma-junit-reporter'),
+      require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
       jasmine: {
@@ -33,14 +34,19 @@ module.exports = function(config) {
       outputFile: 'test-results.xml',
       suite: 'Frontend Unit Tests',
       useBrowserName: false,
-      nameFormatter: undefined,
-      classNameFormatter: undefined,
+      classNameFormatter: function(browser, result) {
+        return result.suite[0];
+      },
+      nameFormatter: function(browser, result) {
+        return result.description;
+      },
       properties: {},
       xmlVersion: null
     },
     reporters: ['progress', 'kjhtml', 'junit', 'coverage'],
     browsers: ['Chrome'],
     restartOnFileChange: true,
+    singleRun: false,
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
         base: 'ChromeHeadless',

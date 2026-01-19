@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 144.0.0.0 (Mac OS 10.15.7)" package="Frontend Unit Tests" timestamp="2026-01-19T22:02:28" id="0" hostname="chan.myint" tests="13" errors="0" failures="0" time="0.13">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/144.0.0.0 Safari/537.36"/>
+  </properties>
+  <testcase name="should create the app" time="0.027" classname="AppComponent"/>
+  <testcase name="should have authService injected" time="0.001" classname="AppComponent"/>
+  <testcase name="should perform calculations correctly" time="0" classname="Example Service"/>
+  <testcase name="should handle array operations" time="0" classname="Example Service"/>
+  <testcase name="should return initial data" time="0" classname="Example Service"/>
+  <testcase name="should update data correctly" time="0" classname="Example Service"/>
+  <testcase name="should be created" time="0" classname="Example Service"/>
+  <testcase name="should validate boolean properties" time="0" classname="Example Service"/>
+  <testcase name="should handle errors gracefully" time="0" classname="Example Component"/>
+  <testcase name="should handle asynchronous operations" time="0.102" classname="Example Component"/>
+  <testcase name="should validate form input" time="0" classname="Example Component"/>
+  <testcase name="should handle user clicks" time="0" classname="Example Component"/>
+  <testcase name="should integrate multiple components" time="0" classname="Example Integration Tests"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>
