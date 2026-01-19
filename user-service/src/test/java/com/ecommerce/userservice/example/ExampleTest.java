@@ -45,8 +45,8 @@ public class ExampleTest {
         // Act
         String actual = testData;
         
-        // Assert
-        assertEquals(expected, actual, "Test data should match expected value");
+        // Assert - INTENTIONALLY FAILING TO TEST PIPELINE FAIL-FAST
+        assertEquals("This will fail", actual, "Test data should match expected value");
     }
     
     @Test
