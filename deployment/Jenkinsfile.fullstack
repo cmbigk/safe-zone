@@ -131,35 +131,35 @@ pipeline {
             }
         }
         
-        // Frontend Tests - Commented out pending Chrome/Chromium installation
-        // Uncomment after installing Chrome in Jenkins container
-        /*
-        stage('Frontend Tests') {
-            when {
-                expression { params.SKIP_TESTS == false && params.ROLLBACK == false }
-            }
-            steps {
-                dir('frontend') {
-                    echo '🧪 Running Angular Jasmine/Karma tests...'
-                    sh 'npm ci'
-                    sh 'npm run test:ci'
-                }
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: 'frontend/test-results/**/*.xml'
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'frontend/coverage/lcov-report',
-                        reportFiles: 'index.html',
-                        reportName: 'Frontend Code Coverage'
-                    ])
-                }
-            }
-        }
-        */
+        // Frontend Tests - Temporarily disabled pending Chrome/Chromium installation in Jenkins
+        // To re-enable: install Chrome/Chromium in Dockerfile.jenkins and uncomment below
+        
+        // stage('Frontend Tests') {
+        //     when {
+        //         expression { params.SKIP_TESTS == false && params.ROLLBACK == false }
+        //     }
+        //     steps {
+        //         dir('frontend') {
+        //             echo '🧪 Running Angular Jasmine/Karma tests...'
+        //             sh 'npm ci'
+        //             sh 'npm run test:ci'
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             junit allowEmptyResults: true, testResults: 'frontend/test-results/**/*.xml'
+        //             publishHTML([
+        //                 allowMissing: true,
+        //                 alwaysLinkToLastBuild: true,
+        //                 keepAll: true,
+        //                 reportDir: 'frontend/coverage/lcov-report',
+        //                 reportFiles: 'index.html',
+        //                 reportName: 'Frontend Code Coverage'
+        //             ])
+        //         }
+        //     }
+        // }
+
         
         stage('Backup Current Deployment') {
             when {
