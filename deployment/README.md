@@ -609,3 +609,4 @@ For issues or questions:
 ---
 
 **Happy CI/CD! 🚀**
+✅ Docker CLI installed in Jenkins container
