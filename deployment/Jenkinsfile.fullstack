@@ -14,10 +14,12 @@ pipeline {
     }
     
     triggers {
-        // Poll SCM every 5 minutes for changes
-        pollSCM('H/2 * * * *')
-        // Alternative: Use GitHub webhook for instant triggers
-        // githubPush()
+        // GitHub webhook for instant build triggers
+        // Configure at: GitHub Repo -> Settings -> Webhooks
+        // Payload URL: http://YOUR_JENKINS_URL/github-webhook/
+        // Content type: application/json
+        // Events: Just the push event
+        githubPush()
     }
     
     stages {
@@ -69,9 +71,91 @@ pipeline {
             }
         }
         
-        // Note: Tests already run during Docker build phase (mvn clean package includes tests)
-        // Tests are executed when building each service's Docker image
-        // To skip tests during build, add SKIP_TESTS parameter and -DskipTests to Dockerfiles
+        stage('Backend Tests') {
+            when {
+                expression { params.SKIP_TESTS == false && params.ROLLBACK == false }
+            }
+            parallel {
+                stage('User Service Tests') {
+                    steps {
+                        dir('user-service') {
+                            echo '🧪 Running User Service JUnit tests...'
+                            sh 'mvn test'
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'user-service/target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+                stage('Product Service Tests') {
+                    steps {
+                        dir('product-service') {
+                            echo '🧪 Running Product Service JUnit tests...'
+                            sh 'mvn test'
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'product-service/target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+                stage('Media Service Tests') {
+                    steps {
+                        dir('media-service') {
+                            echo '🧪 Running Media Service JUnit tests...'
+                            sh 'mvn test'
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'media-service/target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+                stage('API Gateway Tests') {
+                    steps {
+                        dir('api-gateway') {
+                            echo '🧪 Running API Gateway JUnit tests...'
+                            sh 'mvn test'
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'api-gateway/target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Frontend Tests') {
+            when {
+                expression { params.SKIP_TESTS == false && params.ROLLBACK == false }
+            }
+            steps {
+                dir('frontend') {
+                    echo '🧪 Running Angular Jasmine/Karma tests...'
+                    sh 'npm ci'
+                    sh 'npm run test:ci'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'frontend/test-results/**/*.xml'
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'frontend/coverage/lcov-report',
+                        reportFiles: 'index.html',
+                        reportName: 'Frontend Code Coverage'
+                    ])
+                }
+            }
+        }
         
         stage('Backup Current Deployment') {
             when {
@@ -329,7 +413,25 @@ pipeline {
         failure {
             script {
                 def buildDuration = currentBuild.durationString.replace(' and counting', '')
-                def failedStage = currentBuild.result
+                def failedStage = env.STAGE_NAME ?: 'Unknown'
+                
+                // Get test failure details
+                def testFailures = ''
+                try {
+                    def testResults = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction.class)
+                    if (testResults) {
+                        testFailures = """
+                        📊 Test Results:
+                        - Total: ${testResults.totalCount}
+                        - Failed: ${testResults.failCount}
+                        - Skipped: ${testResults.skipCount}
+                        - Pass Rate: ${testResults.totalCount > 0 ? ((testResults.totalCount - testResults.failCount) * 100 / testResults.totalCount).round(2) : 0}%
+                        """.stripIndent()
+                    }
+                } catch (Exception e) {
+                    testFailures = '(Test results not available)'
+                }
+                
                 def message = """
                     ❌ BUILD FAILED #${BUILD_NUMBER}
                     
@@ -337,19 +439,28 @@ pipeline {
                     🌿 Branch: ${env.GIT_BRANCH}
                     ⏱️ Duration: ${buildDuration}
                     🚀 Environment: ${params.ENVIRONMENT}
+                    🎯 Failed Stage: ${failedStage}
                     👤 Started by: ${currentBuild.getBuildCauses()[0].userId ?: 'SCM'}
                     
-                    🔗 Build URL: ${env.BUILD_URL}console
+                    ${testFailures}
                     
-                    ⚠️ Action Required: Check logs and fix the issue
-                    💡 Rollback available: Run build with ROLLBACK=true
+                    🔗 Build URL: ${env.BUILD_URL}
+                    📋 Test Report: ${env.BUILD_URL}testReport/
+                    📊 Console Log: ${env.BUILD_URL}console
+                    
+                    ⚠️ Action Required: 
+                    1. Check test failures in Test Report
+                    2. Review console logs for error details
+                    3. Fix the failing tests/build
+                    
+                    💡 Quick Rollback: Run build with ROLLBACK=true parameter
                 """.stripIndent()
                 
                 echo message
                 
                 // Email notification
                 // emailext (
-                //     subject: "❌ Build #${BUILD_NUMBER} Failed",
+                //     subject: "❌ Build #${BUILD_NUMBER} Failed - ${failedStage}",
                 //     body: message,
                 //     to: 'team@example.com',
                 //     attachLog: true
@@ -362,15 +473,42 @@ pipeline {
                 //     channel: '#deployments'
                 // )
                 
-                // Automatic rollback on failure
-                echo '🔄 Consider running rollback: trigger build with ROLLBACK=true'
+                // Automatic rollback on deployment failure
+                if (failedStage.contains('Deploy') || failedStage.contains('Health Check')) {
+                    echo '🔄 Deployment failed! Automatic rollback initiated...'
+                    try {
+                        sh 'docker-compose -f docker-compose.yml down'
+                        sh 'docker-compose -f docker-compose.yml up -d'
+                        echo '✅ Rollback completed - services restored to previous version'
+                    } catch (Exception e) {
+                        echo "⚠️ Automatic rollback failed: ${e.message}"
+                        echo '💡 Manual intervention required - check docker-compose.yml'
+                    }
+                } else {
+                    echo '🔄 Consider running rollback: trigger build with ROLLBACK=true'
+                }
             }
         }
         
         unstable {
             script {
-                echo '⚠️ Build unstable - some tests may have failed'
-                // Send notification about unstable build
+                def testResults = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction.class)
+                def unstableMessage = """
+                    ⚠️ BUILD UNSTABLE #${BUILD_NUMBER}
+                    
+                    Some tests failed but build completed.
+                    
+                    📊 Test Results:
+                    - Total: ${testResults?.totalCount ?: 'N/A'}
+                    - Failed: ${testResults?.failCount ?: 'N/A'}
+                    - Skipped: ${testResults?.skipCount ?: 'N/A'}
+                    
+                    🔗 Test Report: ${env.BUILD_URL}testReport/
+                """.stripIndent()
+                
+                echo unstableMessage
+                
+                // slackSend(color: 'warning', message: unstableMessage, channel: '#deployments')
             }
         }
         
