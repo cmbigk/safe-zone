@@ -142,7 +142,7 @@ public class MediaService {
         String url = "/api/media/files/" + media.getId();
         return new MediaResponse(
                 media.getId(),
-                media.getFilename(),
+                
                 media.getOriginalFilename(),
                 media.getContentType(),
                 media.getFileSize(),
