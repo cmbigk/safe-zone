@@ -229,12 +229,7 @@ Build #59: Triggered by "GitHub push by cmbigk"
 environment {
     BUILD_NOTIFICATION_EMAIL = "${env.BUILD_NOTIFICATION_EMAIL ?: ''}"
     SLACK_CHANNEL = "${env.SLACK_CHANNEL ?: '#all-cicd-pipeline'}"
-    
-    // Credentials placeholders (ready to use):
-    // GITHUB_CREDS = credentials('github-credentials')  ✅ CONFIGURED
-    // DB_PASSWORD = credentials('database-password')     ⚠️ NOT CONFIGURED
-    // API_KEY = credentials('api-key-secret')           ⚠️ NOT CONFIGURED
-    // SLACK_TOKEN = credentials('slack-token-noti')     ✅ CONFIGURED
+
 }
 ```
 
