@@ -10,10 +10,10 @@ A comprehensive e-commerce platform built with **Java 21**, Spring Boot microser
 
 ✅ **Backend Services Completed** (Java 21 + Spring Boot 3.2.0)  
 ✅ **Docker Integration** (docker-compose with all services)  
-✅ **API Testing Guide** (comprehensive audit checklist)  
+✅ **Test Reporting** (JUnit XML + JaCoCo coverage with 50% threshold)  
 ✅ **Jenkins CI/CD Pipeline** (automated testing, deployment, rollback)  
 ✅ **GitHub Integration** (auto-trigger builds on commit)  
-📋 **Frontend Guide** (complete Angular implementation guide provided)  
+✅ **Frontend Completed** (Angular 17 with full implementation)  
 
 ## 🚀 CI/CD Pipeline
 
@@ -31,7 +31,9 @@ cd deployment
 ```
 Then open http://localhost:8090
 
-**📚 Complete CI/CD Documentation:** See [deployment/README.md](deployment/README.md)
+**📚 Documentation:**
+- **Test Reports:** See [TEST_REPORTING.md](TEST_REPORTING.md) for comprehensive testing documentation
+- **Pipeline Evaluation:** See [JENKINS_PIPELINE_EVALUATION.md](JENKINS_PIPELINE_EVALUATION.md)
 
 ## 🏗️ Architecture Overview
 
@@ -39,12 +41,13 @@ Then open http://localhost:8090
 1. **User Service** (Port 8081) - Authentication, registration, profile management, avatar upload
 2. **Product Service** (Port 8082) - Product CRUD with seller-only authorization
 3. **Media Service** (Port 8083) - Image upload with 2MB limit and type validation
-4. **API Gateway** (Port 8080) - Optional centralized routing _(not yet implemented)_
+4. **API Gateway** (Port 8080) - Centralized routing and request handling
 
 ### Technologies
 - **Backend**: Java 21, Spring Boot 3.2.0, MongoDB, Kafka, JWT, Apache Tika
-- **Frontend**: Angular 17+ _(implementation guide provided)_
-- **Infrastructure**: Docker, Docker Compose
+- **Frontend**: Angular 17+, Karma/Jasmine testing
+- **Infrastructure**: Docker, Docker Compose, Jenkins CI/CD
+- **Testing**: JUnit 5, Maven Surefire/Failsafe, JaCoCo (50% coverage threshold)
 - **Security**: BCrypt, JWT, Role-based access control
 
 ## ✨ Features
@@ -82,6 +85,18 @@ Then open http://localhost:8090
 - ✅ Comprehensive input validation (Bean Validation)
 - ✅ Global exception handling with meaningful error messages
 - ✅ File upload constraints enforced
+
+### CI/CD & Test Reporting
+- ✅ Jenkins automated pipelines for all services
+- ✅ JUnit XML test reports with detailed execution data
+- ✅ JaCoCo code coverage (HTML + XML reports)
+- ✅ 50% minimum coverage threshold enforced
+- ✅ Test results archived and accessible in Jenkins UI
+- ✅ Integration test support (Maven Failsafe)
+- ✅ Frontend coverage reports (Karma + Istanbul)
+- ✅ Historical trend tracking across builds
+
+**📊 View Reports:** All test and coverage reports available at `${BUILD_URL}testReport/` and `${BUILD_URL}jacoco/`
 
 ## 🚀 Quick Start
 
@@ -268,10 +283,12 @@ ng serve
 
 | Service | URL | Description |
 |---------|-----|-------------|
+| **Jenkins CI/CD** | http://localhost:8090 | Jenkins automation server (admin/admin123) |
 | **Frontend** | http://localhost:4200 | Angular UI (login, register, products, dashboard) |
 | **User Service** | http://localhost:8081 | Authentication, profile management |
 | **Product Service** | http://localhost:8082 | Product CRUD operations |
 | **Media Service** | http://localhost:8083 | Image upload & serving |
+| **API Gateway** | http://localhost:8080 | Centralized API routing |
 | **MongoDB User** | mongodb://localhost:27017 | User database |
 | **MongoDB Product** | mongodb://localhost:27018 | Product database |
 | **MongoDB Media** | mongodb://localhost:27019 | Media metadata database |
@@ -296,12 +313,38 @@ Invoke-RestMethod -Uri "http://localhost:4200"                  # Frontend
 5. Create a product with image upload
 6. View products in **Products** page
 
-### **3. API Testing (Postman)**
-See `POSTMAN_API_TESTING_GUIDE.md` for comprehensive API test cases:
-- User registration & authentication (18 test cases)
-- Product CRUD operations (12 test cases)
-- Media upload & validation
-- Error handling & authorization
+### **3. Automated Testing**
+
+**Run Backend Tests:**
+```bash
+# User Service
+cd user-service
+mvn test                                    # Run unit tests
+mvn verify                                  # Run integration tests
+open target/site/jacoco/index.html          # View coverage report
+
+# Product Service
+cd product-service
+mvn test
+open target/site/jacoco/index.html
+
+# All services generate reports in:
+# - target/surefire-reports/*.xml          (JUnit XML)
+# - target/site/jacoco/                    (Coverage HTML)
+```
+
+**Run Frontend Tests:**
+```bash
+cd frontend
+npm run test                                # Interactive mode
+npm run test:ci                             # CI mode (headless)
+open coverage/index.html                    # View coverage report
+```
+
+**View Reports in Jenkins:**
+- Test Results: http://localhost:8090/job/<service-name>/<build>/testReport/
+- Coverage: http://localhost:8090/job/<service-name>/<build>/jacoco/
+- Full Documentation: See [TEST_REPORTING.md](TEST_REPORTING.md)
 
 ---
 
@@ -451,9 +494,11 @@ docker logs user-service --tail 50
 
 ## 🎯 Next Steps
 
-- ✅ **Backend & Frontend Setup**: Complete
-- ✅ **API Testing**: See `POSTMAN_API_TESTING_GUIDE.md`
-- 📋 **Remaining Work**: See `TODO.txt` for gateway and additional features
+- ✅ **Backend Services**: Complete with comprehensive testing
+- ✅ **Frontend**: Angular implementation complete
+- ✅ **CI/CD Pipeline**: Jenkins automation with test reporting
+- ✅ **Test Coverage**: All services configured with JaCoCo
+- 🔄 **Future Enhancements**: Additional integration tests, E2E testing, performance monitoring
 
 ## API Endpoints
 
