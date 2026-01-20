@@ -240,4 +240,4 @@ describe('ProductService - Real Tests', () => {
     expect(req.request.headers.has('X-User-Id')).toBe(false);
     req.flush([]);
   });
-}
+})
