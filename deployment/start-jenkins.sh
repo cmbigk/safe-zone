@@ -45,7 +45,7 @@ while [ $attempt -lt $max_attempts ]; do
     echo "✓ Jenkins is ready!"
     echo ""
     echo "Open: http://localhost:8090"
-    echo "Login: admin / admin123"
+    echo "Login: admin / *****"
     echo ""
     break
   fi
