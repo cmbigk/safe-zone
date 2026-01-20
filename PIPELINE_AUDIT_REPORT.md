@@ -28,7 +28,7 @@ stage('Deploy Services') {
         expression { params.ROLLBACK == false }
     }
     steps {
-        // Automatic deployment of all services
+        // Automatic deployment of all 
         - User Service → Port 8081
         - Product Service → Port 8082
         - Media Service → Port 8083
