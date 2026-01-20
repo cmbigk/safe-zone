@@ -103,22 +103,24 @@ describe('AuthService - Real Tests', () => {
   it('should correctly identify seller role', () => {
     // Arrange
     const sellerUser: User = { ...mockUser, role: 'SELLER' };
+    localStorage.setItem('token', 'jwt-token-123');
     localStorage.setItem('user', JSON.stringify(sellerUser));
     
-    // Reload service to pick up the user from localStorage
-    service = TestBed.inject(AuthService);
+    // Create new service instance to pick up localStorage changes
+    const newService = new AuthService(TestBed.inject(HttpTestingController) as any);
 
     // Act & Assert
-    expect(service.isSeller()).toBe(true);
+    expect(newService.isSeller()).toBe(true);
   });
 
   it('should correctly identify buyer role (not seller)', () => {
     // Arrange
+    localStorage.setItem('token', 'jwt-token-123');
     localStorage.setItem('user', JSON.stringify(mockUser));
-    service = TestBed.inject(AuthService);
+    const newService = new AuthService(TestBed.inject(HttpTestingController) as any);
 
     // Act & Assert
-    expect(service.isSeller()).toBe(false);
+    expect(newService.isSeller()).toBe(false);
   });
 
   it('should clear authentication data on logout', () => {

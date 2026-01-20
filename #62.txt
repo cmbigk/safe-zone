@@ -1,0 +1,849 @@
+Started by GitHub push by cmbigk
+Obtained deployment/Jenkinsfile.fullstack from git https://github.com/cmbigk/jenkins
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/fullstack-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-credentials
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/fullstack-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/cmbigk/jenkins # timeout=10
+Fetching upstream changes from https://github.com/cmbigk/jenkins
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials GitHub credentials
+ > git fetch --tags --force --progress -- https://github.com/cmbigk/jenkins +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 45e382859a0fb2964b8179ab9a8e725c9768c06f (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 45e382859a0fb2964b8179ab9a8e725c9768c06f # timeout=10
+Commit message: "test"
+ > git rev-list --no-walk dc01db91e88c36ff3ac689e2c2918d8611cdf08b # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] echo
+📦 Checking out source code from GitHub...
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-credentials
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/fullstack-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/cmbigk/jenkins # timeout=10
+Fetching upstream changes from https://github.com/cmbigk/jenkins
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials GitHub credentials
+ > git fetch --tags --force --progress -- https://github.com/cmbigk/jenkins +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 45e382859a0fb2964b8179ab9a8e725c9768c06f (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 45e382859a0fb2964b8179ab9a8e725c9768c06f # timeout=10
+Commit message: "test"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Backend Services)
+[Pipeline] parallel
+[Pipeline] { (Branch: User Service)
+[Pipeline] { (Branch: Product Service)
+[Pipeline] { (Branch: Media Service)
+[Pipeline] { (Branch: API Gateway)
+[Pipeline] stage
+[Pipeline] { (User Service)
+[Pipeline] stage
+[Pipeline] { (Product Service)
+[Pipeline] stage
+[Pipeline] { (Media Service)
+[Pipeline] stage
+[Pipeline] { (API Gateway)
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/user-service
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/product-service
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/media-service
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/api-gateway
+[Pipeline] {
+[Pipeline] echo
+🔨 Building User Service with Docker...
+[Pipeline] sh
+[Pipeline] echo
+🔨 Building Product Service with Docker...
+[Pipeline] sh
+[Pipeline] echo
+🔨 Building Media Service with Docker...
+[Pipeline] sh
+[Pipeline] echo
+🔨 Building API Gateway with Docker...
+[Pipeline] sh
++ docker build -t ecommerce/user-service:62 .
++ docker build -t ecommerce/product-service:62 .
++ docker build -t ecommerce/media-service:62 .
++ docker build -t ecommerce/api-gateway:62 .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 316B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 316B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 348B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 362B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21-alpine
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#3 DONE 0.5s
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#3 DONE 0.5s
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#3 DONE 0.5s
+#2 DONE 0.5s
+
+#3 [internal] load metadata for docker.io/library/eclipse-temurin:21-jdk-alpine
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21
+#2 DONE 0.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [build 1/6] FROM docker.io/library/maven:3.9.5-eclipse-temurin-21@sha256:2bbd188fef2384cf93181bb992b75542a2837afdd5c4c2274cebcae71cd05156
+#5 resolve docker.io/library/maven:3.9.5-eclipse-temurin-21@sha256:2bbd188fef2384cf93181bb992b75542a2837afdd5c4c2274cebcae71cd05156 0.0s done
+#5 DONE 0.0s
+
+#6 [stage-1 1/4] FROM docker.io/library/eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3
+#6 resolve docker.io/library/eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 3.25kB done
+#7 DONE 0.0s
+
+#8 [build 3/6] COPY pom.xml .
+#8 CACHED
+
+#9 [build 6/6] RUN mvn clean package
+#9 CACHED
+
+#10 [stage-1 2/4] WORKDIR /app
+#10 CACHED
+
+#11 [build 4/6] RUN mvn dependency:go-offline
+#11 CACHED
+
+#12 [build 5/6] COPY src ./src
+#12 CACHED
+
+#13 [build 2/6] WORKDIR /app
+#13 CACHED
+
+#14 [stage-1 3/3] COPY --from=build /app/target/*.jar app.jar
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:989d030a1349ce261c97e37bc3bf8bd4aaf6812aeed741f7e527b42692d53373 0.0s done
+#15 exporting config sha256:f8335a10b1380369691ebb49c04c197dc6b3fd16ab54087766c59b29bb781e8b done
+#15 exporting attestation manifest sha256:9a085ca848993e1e769c2b0056c10a98c6c3aba14f2b64632aebbc7aa0afc7ca 0.0s done
+#15 exporting manifest list sha256:d371f24df9d51697a00a631598784aefbbbacc953c197144ccea5a4376639ed8
+#15 exporting manifest list sha256:d371f24df9d51697a00a631598784aefbbbacc953c197144ccea5a4376639ed8 0.0s done
+#15 naming to docker.io/ecommerce/user-service:62 done
+#15 unpacking to docker.io/ecommerce/user-service:62 done
+#15 DONE 0.1s
+[Pipeline] sh
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21
+#2 DONE 0.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [build 1/6] FROM docker.io/library/maven:3.9.5-eclipse-temurin-21@sha256:2bbd188fef2384cf93181bb992b75542a2837afdd5c4c2274cebcae71cd05156
+#5 resolve docker.io/library/maven:3.9.5-eclipse-temurin-21@sha256:2bbd188fef2384cf93181bb992b75542a2837afdd5c4c2274cebcae71cd05156 0.0s done
+#5 DONE 0.0s
+
+#6 [stage-1 1/4] FROM docker.io/library/eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3
+#6 resolve docker.io/library/eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 2.38kB done
+#7 DONE 0.0s
+
+#8 [build 2/6] WORKDIR /app
+#8 CACHED
+
+#9 [build 5/6] COPY src ./src
+#9 CACHED
+
+#10 [build 4/6] RUN mvn dependency:go-offline
+#10 CACHED
+
+#11 [stage-1 2/4] WORKDIR /app
+#11 CACHED
+
+#12 [build 3/6] COPY pom.xml .
+#12 CACHED
+
+#13 [build 6/6] RUN mvn clean package
+#13 CACHED
+
+#14 [stage-1 3/3] COPY --from=build /app/target/*.jar app.jar
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:056102bf1ffa8c043a72e681dd104aac6bb3a701474fb09ad919d3048302af98 done
+#15 exporting config sha256:2121462c88775bb50aa328938a57685a3a4fd494535a7189283955ff355d53cf done
+#15 exporting attestation manifest sha256:fbcc00815c57530b30d5ee49f238840b719ac7b27d3756b3c5080b4639506420 0.0s done
+#15 exporting manifest list sha256:36e8410f7575593fcb0888a0a2e41c03299fc3b9481ca2f2cb1f5e794ea8d909
+#15 exporting manifest list sha256:36e8410f7575593fcb0888a0a2e41c03299fc3b9481ca2f2cb1f5e794ea8d909 0.0s done
+#15 naming to docker.io/ecommerce/product-service:62 done
+#15 unpacking to docker.io/ecommerce/product-service:62 done
+#15 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/maven:3.9.5-eclipse-temurin-21
+#2 DONE 0.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [build 1/6] FROM docker.io/library/maven:3.9.5-eclipse-temurin-21@sha256:2bbd188fef2384cf93181bb992b75542a2837afdd5c4c2274cebcae71cd05156
+#5 resolve docker.io/library/maven:3.9.5-eclipse-temurin-21@sha256:2bbd188fef2384cf93181bb992b75542a2837afdd5c4c2274cebcae71cd05156 0.0s done
+#5 DONE 0.0s
+
+#6 [stage-1 1/4] FROM docker.io/library/eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3
+#6 resolve docker.io/library/eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.99kB done
+#7 DONE 0.0s
+
+#8 [stage-1 2/4] WORKDIR /app
+#8 CACHED
+
+#9 [build 3/6] COPY pom.xml .
+#9 CACHED
+
+#10 [build 2/6] WORKDIR /app
+#10 CACHED
+
+#11 [stage-1 3/4] COPY --from=build /app/target/*.jar app.jar
+#11 CACHED
+
+#12 [build 4/6] RUN mvn dependency:go-offline
+#12 CACHED
+
+#13 [build 5/6] COPY src ./src
+#13 CACHED
+
+#14 [build 6/6] RUN mvn clean package
+#14 CACHED
+
+#15 [stage-1 4/4] RUN mkdir -p /app/uploads/media
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:66ba0152d0b1f50df582afb30ec4139a5cea7773d28c7ff7873c5e1330239cbe done
+#16 exporting config sha256:1574e7cce7cef0d25dfadd4adcbd589775715ca6476cb07aa13444e5c217d2a6 done
+#16 exporting attestation manifest sha256:4d432faeb415c8cbc2714bfe15772864b76b24351c4f8fe009ae840925a8284a 0.0s done
+#16 exporting manifest list sha256:098193a16c435f1eb6b64a5c25ccc5e1a9fe31c70aa86564bb8b54330ad26fc2
+#16 exporting manifest list sha256:098193a16c435f1eb6b64a5c25ccc5e1a9fe31c70aa86564bb8b54330ad26fc2 done
+#16 naming to docker.io/ecommerce/media-service:62 done
+#16 unpacking to docker.io/ecommerce/media-service:62 done
+#16 DONE 0.1s
+[Pipeline] sh
+[Pipeline] sh
+#3 DONE 0.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [build 1/6] FROM docker.io/library/maven:3.9.5-eclipse-temurin-21-alpine@sha256:273bf0466fbed6f8abf3a22592b7144ec5388d3eb0b354552e2529482982b848
+#5 resolve docker.io/library/maven:3.9.5-eclipse-temurin-21-alpine@sha256:273bf0466fbed6f8abf3a22592b7144ec5388d3eb0b354552e2529482982b848 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 586B done
+#6 DONE 0.0s
+
+#7 [stage-1 1/3] FROM docker.io/library/eclipse-temurin:21-jdk-alpine@sha256:c4799f335a65b1ecca8a31239b05522f2b0a184d6818f6349e83484ee6956198
+#7 resolve docker.io/library/eclipse-temurin:21-jdk-alpine@sha256:c4799f335a65b1ecca8a31239b05522f2b0a184d6818f6349e83484ee6956198 0.0s done
+#7 DONE 0.0s
+
+#8 [build 3/6] COPY pom.xml .
+#8 CACHED
+
+#9 [build 4/6] RUN mvn dependency:go-offline
+#9 CACHED
+
+#10 [build 2/6] WORKDIR /app
+#10 CACHED
+
+#11 [stage-1 2/3] WORKDIR /app
+#11 CACHED
+
+#12 [build 5/6] COPY src ./src
+#12 CACHED
+
+#13 [build 6/6] RUN mvn clean package
+#13 CACHED
+
+#14 [stage-1 3/3] COPY --from=build /app/target/*.jar app.jar
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:30764ba8e73c322f776fa06aea4fa8ae30386fa7eefbb60fe6cd79f5fc2b8928 done
+#15 exporting config sha256:f773f0ab37bcb6085880f1cb6097172e72ea31f88ab0617fb29d696d0a36e018 done
+#15 exporting attestation manifest sha256:95629ffe4f15eb1dd44ae24db80503d0c64ce9ff9df2d71f22fa171b35414fbc 0.0s done
+#15 exporting manifest list sha256:e34a48bccf6f0f20d4c71e16e605ff88c69676f1e0e4163a84831875682df769 0.0s done
+#15 naming to docker.io/ecommerce/api-gateway:62 done
+#15 unpacking to docker.io/ecommerce/api-gateway:62 done
+#15 DONE 0.1s
+[Pipeline] sh
++ docker tag ecommerce/user-service:62 ecommerce/user-service:latest
+[Pipeline] }
++ docker tag ecommerce/product-service:62 ecommerce/product-service:latest
++ docker tag ecommerce/media-service:62 ecommerce/media-service:latest
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] }
+[Pipeline] }
++ docker tag ecommerce/api-gateway:62 ecommerce/api-gateway:latest
+[Pipeline] // stage
+[Pipeline] // dir
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] }
+[Pipeline] }
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] // stage
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] }
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // parallel
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Backend Tests)
+[Pipeline] parallel
+[Pipeline] { (Branch: User Service Tests)
+[Pipeline] { (Branch: Product Service Tests)
+[Pipeline] { (Branch: Media Service Tests)
+[Pipeline] { (Branch: API Gateway Tests)
+[Pipeline] stage
+[Pipeline] { (User Service Tests)
+[Pipeline] stage
+[Pipeline] { (Product Service Tests)
+[Pipeline] stage
+[Pipeline] { (Media Service Tests)
+[Pipeline] stage
+[Pipeline] { (API Gateway Tests)
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/user-service
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/product-service
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/media-service
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/api-gateway
+[Pipeline] {
+[Pipeline] echo
+🧪 Running User Service JUnit tests...
+[Pipeline] sh
+[Pipeline] echo
+🧪 Running Product Service JUnit tests...
+[Pipeline] sh
+[Pipeline] echo
+🧪 Running Media Service JUnit tests...
+[Pipeline] sh
+[Pipeline] echo
+🧪 Running API Gateway JUnit tests...
+[Pipeline] sh
++ mvn test
++ mvn test
++ mvn test
++ mvn test
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------------< [0;36mcom.ecommerce:user-service[0;1m >---------------------[m
+[[1;34mINFO[m] [1mBuilding user-service 1.0.0[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------------< [0;36mcom.ecommerce:product-service[0;1m >--------------------[m
+[[1;34mINFO[m] [1mBuilding product-service 1.0.0[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------------< [0;36mcom.ecommerce:api-gateway[0;1m >----------------------[m
+[[1;34mINFO[m] [1mBuilding api-gateway 1.0.0[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------------< [0;36mcom.ecommerce:media-service[0;1m >---------------------[m
+[[1;34mINFO[m] [1mBuilding media-service 1.0.0[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36muser-service[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mproduct-service[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mapi-gateway[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36muser-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36muser-service[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /var/jenkins_home/workspace/fullstack-pipeline/user-service/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:testCompile[m [1m(default-testCompile)[m @ [36muser-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.1.2:test[m [1m(default-test)[m @ [36muser-service[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36mproduct-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36mproduct-service[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /var/jenkins_home/workspace/fullstack-pipeline/product-service/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:testCompile[m [1m(default-testCompile)[m @ [36mproduct-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.1.2:test[m [1m(default-test)[m @ [36mproduct-service[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 0 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36mapi-gateway[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mmedia-service[0;1m ---[m
+[[1;34mINFO[m] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[[1;34mINFO[m] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[[1;34mINFO[m] 
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m]  T E S T S
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36mapi-gateway[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /var/jenkins_home/workspace/fullstack-pipeline/api-gateway/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:testCompile[m [1m(default-testCompile)[m @ [36mapi-gateway[0;1m ---[m
+[[1;34mINFO[m] No sources to compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.1.2:test[m [1m(default-test)[m @ [36mapi-gateway[0;1m ---[m
+[[1;34mINFO[m] No tests to run.
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  1.364 s
+[[1;34mINFO[m] Finished at: 2026-01-20T21:16:45Z
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[Pipeline] }
+[Pipeline] // dir
+Post stage
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36mmedia-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36mmedia-service[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /var/jenkins_home/workspace/fullstack-pipeline/media-service/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:testCompile[m [1m(default-testCompile)[m @ [36mmedia-service[0;1m ---[m
+[Pipeline] junit
+Recording test results
+No test report files were found. Configuration error?
+None of the test reports contained any result
+[Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[[1;34mINFO[m] 
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m]  T E S T S
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.1.2:test[m [1m(default-test)[m @ [36mmedia-service[0;1m ---[m
+[[1;34mINFO[m] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[[1;34mINFO[m] 
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m]  T E S T S
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m] Running com.ecommerce.userservice.service.[1mUserServiceTest[m
+[[1;34mINFO[m] Running com.ecommerce.productservice.service.[1mProductServiceTest[m
+WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.10/byte-buddy-agent-1.14.10.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[[1;34mINFO[m] Running com.ecommerce.mediaservice.service.[1mMediaServiceTest[m
+WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.10/byte-buddy-agent-1.14.10.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.10/byte-buddy-agent-1.14.10.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[[1;34mINFO[m] [1;32mTests run: [0;1;32m7[m, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.975 s -- in com.ecommerce.userservice.service.[1mUserServiceTest[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] Results:
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1;32mTests run: 7, Failures: 0, Errors: 0, Skipped: 0[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  2.901 s
+[[1;34mINFO[m] Finished at: 2026-01-20T21:16:47Z
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[Pipeline] }
+[Pipeline] // dir
+Post stage
+[Pipeline] junit
+Recording test results
+[Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+21:16:47.201 [main] INFO com.ecommerce.mediaservice.service.MediaService -- File deleted: test-uploads/test-image.jpg
+21:16:47.203 [main] INFO com.ecommerce.mediaservice.service.MediaService -- Media metadata deleted: media123
+[[1;34mINFO[m] [1;32mTests run: [0;1;32m9[m, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.002 s -- in com.ecommerce.mediaservice.service.[1mMediaServiceTest[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] Results:
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1;32mTests run: 9, Failures: 0, Errors: 0, Skipped: 0[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  2.981 s
+[[1;34mINFO[m] Finished at: 2026-01-20T21:16:47Z
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[Pipeline] }
+[Pipeline] // dir
+Post stage
+[Pipeline] junit
+Recording test results
+[Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // stage
+21:16:47.047 [main] INFO com.ecommerce.productservice.service.ProductService -- Updated seller info for 2 products
+21:16:47.070 [main] INFO com.ecommerce.productservice.service.ProductService -- Product delet[Pipeline] }
+ed: product123 by seller: seller@example.com
+[[1;34mINFO[m] [1;32mTests run: [0;1;32m8[m, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.016 s -- in com.ecommerce.productservice.service.[1mProductServiceTest[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] Results:
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1;32mTests run: 8, Failures: 0, Errors: 0, Skipped: 0[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  2.945 s
+[[1;34mINFO[m] Finished at: 2026-01-20T21:16:47Z
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[Pipeline] }
+[Pipeline] // dir
+Post stage
+[Pipeline] junit
+Recording test results
+[Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // parallel
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Frontend Tests)
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/fullstack-pipeline/frontend
+[Pipeline] {
+[Pipeline] echo
+🧪 Running Angular Jasmine/Karma tests...
+[Pipeline] sh
++ npm ci
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+
+added 952 packages, and audited 953 packages in 4s
+
+164 packages are looking for funding
+  run `npm fund` for details
+
+12 high severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+[Pipeline] sh
++ npm run test:ci
+
+> frontend@0.0.0 test:ci
+> ng test --watch=false --code-coverage --browsers=ChromeHeadlessNoSandbox
+
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+20 01 2026 21:16:57.975:INFO [karma-server]: Karma v6.4.4 server started at http://localhost:9876/
+20 01 2026 21:16:57.976:INFO [launcher]: Launching browsers ChromeHeadlessNoSandbox with concurrency unlimited
+20 01 2026 21:16:57.979:INFO [launcher]: Starting browser ChromeHeadless
+20 01 2026 21:16:58.206:INFO [Chrome Headless 144.0.0.0 (Linux 0.0.0)]: Connected on socket zNR6_E1RVJ9_ZnY4AAAB with id 19458241
+Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 0 of 24 SUCCESS (0 secs / 0 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 1 of 24 SUCCESS (0 secs / 0.032 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 2 of 24 SUCCESS (0 secs / 0.034 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 3 of 24 SUCCESS (0 secs / 0.036 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 4 of 24 SUCCESS (0 secs / 0.036 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 5 of 24 SUCCESS (0 secs / 0.036 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0) AuthService - Real Tests should correctly identify seller role FAILED
+	Expected false to be true.
+	    at <Jasmine>
+	    at UserContext.apply (src/app/services/auth.service.spec.ts:112:32)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 6 of 24 (1 FAILED) (0 secs / 0.038 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 7 of 24 (1 FAILED) (0 secs / 0.145 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 8 of 24 (1 FAILED) (0 secs / 0.148 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 9 of 24 (1 FAILED) (0 secs / 0.149 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 10 of 24 (1 FAILED) (0 secs / 0.15 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 11 of 24 (1 FAILED) (0 secs / 0.15 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 12 of 24 (1 FAILED) (0 secs / 0.151 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 13 of 24 (1 FAILED) (0 secs / 0.152 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 14 of 24 (1 FAILED) (0 secs / 0.153 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 15 of 24 (1 FAILED) (0 secs / 0.154 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 16 of 24 (1 FAILED) (0 secs / 0.155 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 17 of 24 (1 FAILED) (0 secs / 0.155 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 18 of 24 (1 FAILED) (0 secs / 0.156 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0) ProductService - Real Tests should include user headers when user is authenticated FAILED
+	Expected false to be true.
+	    at <Jasmine>
+	    at UserContext.apply (src/app/services/product.service.spec.ts:223:53)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+	Expected false to be true.
+	    at <Jasmine>
+	    at UserContext.apply (src/app/services/product.service.spec.ts:224:50)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+Chrome Headless 144.0.0.0 (Linux 0.0.0): Executed 19 of 24 (2 FAILED) (0 secs / 0.157 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 20 of 24 (2 FAILED) (0 secs / 0.157 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 21 of 24 (2 FAILED) (0 secs / 0.158 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 22 of 24 (2 FAILED) (0 secs / 0.159 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 23 of 24 (2 FAILED) (0 secs / 0.16 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 24 of 24 (2 FAILED) (0 secs / 0.16 secs)
+[1A[2KChrome Headless 144.0.0.0 (Linux 0.0.0): Executed 24 of 24 (2 FAILED) (0.171 secs / 0.16 secs)
+TOTAL: 2 FAILED, 22 SUCCESS
+✔ Browser application bundle generation complete.
+
+=============================== Coverage summary ===============================
+Statements   : 88.88% ( 48/54 )
+Branches     : 100% ( 4/4 )
+Functions    : 88% ( 22/25 )
+Lines        : 88.88% ( 48/54 )
+================================================================================
+✔ Browser application bundle generation complete.
+[Pipeline] }
+[Pipeline] // dir
+Post stage
+[Pipeline] junit
+Recording test results
+[Checks API] No suitable checks publisher found.
+[Pipeline] publishHTML
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at BUILD level /var/jenkins_home/workspace/fullstack-pipeline/frontend/coverage/lcov-report to Frontend_20Code_20Coverage
+ERROR: Specified HTML directory '/var/jenkins_home/workspace/fullstack-pipeline/frontend/coverage/lcov-report' does not exist.
+[htmlpublisher] Copying recursive using current thread
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Backup Current Deployment)
+Stage "Backup Current Deployment" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Rollback)
+Stage "Rollback" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy Services)
+Stage "Deploy Services" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Health Checks)
+Stage "Health Checks" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Tests)
+Stage "Smoke Tests" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+🧹 Cleaning up...
+[Pipeline] sh
++ docker image prune -f
+Total reclaimed space: 0B
++ docker images ecommerce/user-service --format {{.Tag}}
++ grep -E ^[0-9]+$
++ sort -rn
++ xargs -I {} docker rmi ecommerce/user-service:{}
++ tail -n +6
+Untagged: ecommerce/user-service:56
+Deleted: sha256:39610ae1f5c6533c349811ce5554f85cdb9a5a9e73b63961dfd7f79926f886d1
++ docker images ecommerce/product-service --format {{.Tag}}
++ grep -E ^[0-9]+$
++ tail -n +6
++ sort -rn
++ xargs -I {} docker rmi ecommerce/product-service:{}
+Untagged: ecommerce/product-service:57
+Deleted: sha256:da239a7ef915e3dd5afbfea4858ba9d4d19de7063d636d34159a81fcbd1a8902
++ + sort -rn
+grep -E ^[0-9]+$
++ tail -n+  +6
+docker images ecommerce/media-service --format {{.Tag}}
++ xargs -I {} docker rmi ecommerce/media-service:{}
+Untagged: ecommerce/media-service:57
+Deleted: sha256:92697981bff3d7c498ccaf621ac2bdaa48c9d76bbbd5eaaa5008eb5d72f64c43
++ docker images ecommerce/api-gateway --format {{.Tag}}
++ grep -E ^[0-9]+$
++ xargs -I {} docker rmi ecommerce/api-gateway:{}
++ + sorttail -rn
+ -n +6
+Untagged: ecommerce/api-gateway:57
+Deleted: sha256:19f163e36963c603cb61f231cd69095259fbbf3d2034fa34ed38592f14a5c58b
++ docker images ecommerce/frontend --format {{.Tag}}
++ grep -E ^[0-9]+$
++ sort -rn
++ tail -n +6
++ xargs -I {} docker rmi ecommerce/frontend:{}
+[Pipeline] echo
+✅ Cleanup completed
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] script
+[Pipeline] {
+Scripts not permitted to use method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild. Administrators can decide whether to approve or reject this signature.
+[Pipeline] echo
+
+❌ BUILD FAILED #62
+
+📦 Project: Ecommerce Fullstack
+🌿 Branch: origin/main
+⏱️ Duration: 20 sec
+🚀 Environment: dev
+🎯 Failed Stage: Declarative: Post Actions
+👤 Started by: SCM
+
+(Test results not available)
+
+🔗 Build URL: https://kolton-proptosed-unludicrously.ngrok-free.dev/job/fullstack-pipeline/62/
+📋 Test Report: https://kolton-proptosed-unludicrously.ngrok-free.dev/job/fullstack-pipeline/62/testReport/
+📊 Console Log: https://kolton-proptosed-unludicrously.ngrok-free.dev/job/fullstack-pipeline/62/console
+
+⚠️ Action Required: 
+1. Check test failures in Test Report
+2. Review console logs for error details
+3. Fix the failing tests/build
+
+💡 Quick Rollback: Run build with ROLLBACK=true parameter
+
+[Pipeline] slackSend
+Slack Send Pipeline step running, values are - baseUrl: <empty>, teamDomain: CI/CD pipeline, channel: #all-cicd-pipeline, color: danger, botUser: true, tokenCredentialId: slack-token-noti, notifyCommitters: false, iconEmoji: <empty>, username: <empty>, timestamp: <empty>
+[Pipeline] echo
+🔄 Consider running rollback: trigger build with ROLLBACK=true
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

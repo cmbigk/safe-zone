@@ -213,8 +213,13 @@ describe('ProductService - Real Tests', () => {
   });
 
   it('should include user headers when user is authenticated', (done) => {
+    // Arrange - ensure mock returns user
+    authService.getCurrentUser.and.returnValue(mockUser);
+
     // Act
     service.getAllProducts().subscribe(() => {
+      // Assert that getCurrentUser was called
+      expect(authService.getCurrentUser).toHaveBeenCalled();
       done();
     });
 
