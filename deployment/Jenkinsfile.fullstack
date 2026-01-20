@@ -394,12 +394,6 @@ pipeline {
                     
                     🔗 Build URL: ${env.BUILD_URL}
                     
-                    Services deployed:
-                    - User Service: http://localhost:8081
-                    - Product Service: http://localhost:8082
-                    - Media Service: http://localhost:8083
-                    - API Gateway: http://localhost:8080
-                    - Frontend: http://localhost:4200
                 """.stripIndent()
                 
                 echo message
