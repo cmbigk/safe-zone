@@ -411,12 +411,11 @@ pipeline {
                         color: 'good',
                         message: message,
                         channel: env.SLACK_CHANNEL ?: '#all-cicd-pipeline',
-                        teamDomain: env.SLACK_TEAM ?: 'CI/CD pipeline',
                         tokenCredentialId: 'slack-token-noti'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Slack notification failed: ${e.message}"
-                    echo "💡 Install Slack Notification Plugin in Jenkins"
+                    echo "💡 Check Slack token and channel configuration"
                 }
             }
         }
@@ -475,12 +474,11 @@ pipeline {
                         color: 'danger',
                         message: message,
                         channel: env.SLACK_CHANNEL ?: '#all-cicd-pipeline',
-                        teamDomain: env.SLACK_TEAM ?: 'CI/CD pipeline',
                         tokenCredentialId: 'slack-token-noti'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Slack notification failed: ${e.message}"
-                    echo "💡 Install Slack Notification Plugin in Jenkins"
+                    echo "💡 Check Slack token and channel configuration"
                 }
                 
                 // Automatic rollback on deployment failure
@@ -522,13 +520,13 @@ pipeline {
                 try {
                     slackSend(
                         color: 'warning',
-                        message: env.SLACK_CHANNEL ?: '#deployments',
-                        teamDomain: env.SLACK_TEAM ?: 'your-team',
-                        tokenCredentialId: 'slack-token'
+                        message: unstableMessage,
+                        channel: env.SLACK_CHANNEL ?: '#all-cicd-pipeline',
+                        tokenCredentialId: 'slack-token-noti'
                     )
                 } catch (Exception e) {
                     echo "⚠️ Slack notification failed: ${e.message}"
-                    echo "💡 Install Slack Notification Plugin in Jenkins"
+                    echo "💡 Check Slack token and channel configuration"
                 }
             }
         }
