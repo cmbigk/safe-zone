@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
-import { User, UserRole, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
+import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
 
 /**
  * Unit tests for AuthService
@@ -17,7 +17,7 @@ describe('AuthService - Real Tests', () => {
     firstName: 'John',
     lastName: 'Doe',
     phone: '1234567890',
-    role: UserRole.BUYER,
+    role: 'CLIENT',
     avatarUrl: '/avatar.jpg',
     createdAt: '2024-01-01T00:00:00',
     updatedAt: '2024-01-01T00:00:00'
@@ -58,7 +58,7 @@ describe('AuthService - Real Tests', () => {
       firstName: 'John',
       lastName: 'Doe',
       phone: '1234567890',
-      role: UserRole.BUYER
+      role: 'CLIENT'
     };
 
     // Act
@@ -102,7 +102,7 @@ describe('AuthService - Real Tests', () => {
 
   it('should correctly identify seller role', () => {
     // Arrange
-    const sellerUser: User = { ...mockUser, role: UserRole.SELLER };
+    const sellerUser: User = { ...mockUser, role: 'SELLER' };
     localStorage.setItem('user', JSON.stringify(sellerUser));
     
     // Reload service to pick up the user from localStorage

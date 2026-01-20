@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { ProductService } from './product.service';
 import { AuthService } from './auth.service';
 import { Product, ProductRequest } from '../models/product.model';
-import { User, UserRole } from '../models/user.model';
+import { User } from '../models/user.model';
 
 /**
  * Unit tests for ProductService
@@ -20,7 +20,7 @@ describe('ProductService - Real Tests', () => {
     firstName: 'John',
     lastName: 'Seller',
     phone: '1234567890',
-    role: UserRole.SELLER,
+    role: 'SELLER',
     avatarUrl: '/avatar.jpg',
     createdAt: '2024-01-01T00:00:00',
     updatedAt: '2024-01-01T00:00:00'

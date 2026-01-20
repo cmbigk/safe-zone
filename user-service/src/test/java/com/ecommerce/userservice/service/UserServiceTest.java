@@ -61,7 +61,7 @@ class UserServiceTest {
         testUser.setFirstName("John");
         testUser.setLastName("Doe");
         testUser.setPhone("1234567890");
-        testUser.setRole(UserRole.BUYER);
+        testUser.setRole(UserRole.CLIENT);
 
         registerRequest = new RegisterRequest();
         registerRequest.setEmail("test@example.com");
@@ -69,7 +69,7 @@ class UserServiceTest {
         registerRequest.setFirstName("John");
         registerRequest.setLastName("Doe");
         registerRequest.setPhone("1234567890");
-        registerRequest.setRole(UserRole.BUYER);
+        registerRequest.setRole(UserRole.CLIENT);
     }
 
     @Test
@@ -184,7 +184,7 @@ class UserServiceTest {
         updatedUser.setFirstName("Jane");
         updatedUser.setLastName("Smith");
         updatedUser.setPhone("9876543210");
-        updatedUser.setRole(UserRole.BUYER);
+        updatedUser.setRole(UserRole.CLIENT);
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
