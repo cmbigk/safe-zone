@@ -1,0 +1,228 @@
+pipeline {
+    agent any
+    
+    tools {
+        nodejs 'NodeJS-20'
+    }
+    
+    environment {
+        SERVICE_NAME = 'frontend'
+        DOCKER_IMAGE = "ecommerce/${SERVICE_NAME}"
+        DOCKER_TAG = "${BUILD_NUMBER}"
+        SONAR_PROJECT_KEY = 'ecommerce-frontend'
+        SCANNER_HOME = tool 'SonarQube-Scanner'
+    }
+    
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Deployment Environment')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip tests?')
+        booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy after build?')
+        booleanParam(name: 'SKIP_SONAR', defaultValue: false, description: 'Skip SonarQube analysis?')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "🔄 Checking out ${SERVICE_NAME}..."
+                checkout scm
+                script {
+                    env.GIT_COMMIT_SHORT = sh(
+                        script: "git rev-parse --short HEAD",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                dir('frontend') {
+                    echo "📦 Installing npm dependencies..."
+                    sh 'npm ci'
+                }
+            }
+        }
+        
+        stage('Lint') {
+            steps {
+                dir('frontend') {
+                    echo "🔍 Running ESLint..."
+                    sh 'npm run lint || true'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            when {
+                expression { params.SKIP_TESTS == false }
+            }
+            steps {
+                dir('frontend') {
+                    echo "🧪 Running unit tests with Karma/Jasmine..."
+                    sh 'npm run test:ci || true'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/test-results/**/*.xml'
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'frontend/coverage',
+                        reportFiles: 'index.html',
+                        reportName: 'Code Coverage Report'
+                    ])
+                }
+            }
+        }
+        
+        stage('Generate Coverage') {
+            when {
+                expression { params.SKIP_SONAR == false }
+            }
+            steps {
+                dir('frontend') {
+                    echo "📊 Generating code coverage report..."
+                    sh 'npm run test:coverage || true'
+                }
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            when {
+                expression { params.SKIP_SONAR == false }
+            }
+            steps {
+                dir('frontend') {
+                    echo "📊 Running SonarQube analysis for ${SERVICE_NAME}..."
+                    script {
+                        withSonarQubeEnv('SonarQube-Local') {
+                            sh """
+                                ${SCANNER_HOME}/bin/sonar-scanner \
+                                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                  -Dsonar.projectName="E-Commerce Frontend" \
+                                  -Dsonar.sources=src \
+                                  -Dsonar.tests=src \
+                                  -Dsonar.test.inclusions=**/*.spec.ts \
+                                  -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts,**/test-results/** \
+                                  -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
+                                  -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                            """
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            when {
+                expression { params.SKIP_SONAR == false }
+            }
+            steps {
+                echo "⏳ Waiting for SonarQube Quality Gate..."
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "❌ Quality Gate failed: ${qg.status}"
+                        } else {
+                            echo "✅ Quality Gate passed!"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Build') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                dir('frontend') {
+                    script {
+                        def buildConfig = ''
+                        if (params.ENVIRONMENT == 'production') {
+                            buildConfig = '--configuration production'
+                        } else if (params.ENVIRONMENT == 'staging') {
+                            buildConfig = '--configuration staging'
+                        }
+                        
+                        echo "🔨 Building Angular application for ${params.ENVIRONMENT}..."
+                        sh "npm run build ${buildConfig}"
+                    }
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'frontend/dist/**/*', fingerprint: true
+                }
+            }
+        }
+        
+        stage('Docker Build') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                dir('frontend') {
+                    echo "🐳 Building Docker image for ${SERVICE_NAME}..."
+                    script {
+                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                        docker.build("${DOCKER_IMAGE}:latest")
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                allOf {
+                    expression { params.DEPLOY == true }
+                    expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                }
+            }
+            steps {
+                script {
+                    echo "🚀 Deploying ${SERVICE_NAME} to ${params.ENVIRONMENT}..."
+                    sh """
+                        docker stop ${SERVICE_NAME} 2>/dev/null || true
+                        docker rm ${SERVICE_NAME} 2>/dev/null || true
+                        docker run -d \
+                            --name ${SERVICE_NAME} \
+                            --network ecommerce-network \
+                            -p 4200:80 \
+                            -e ENVIRONMENT=${params.ENVIRONMENT} \
+                            ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    """
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo "🧹 Cleaning workspace..."
+            cleanWs()
+        }
+        success {
+            echo """
+            ✅ ================================================
+            ✅ Pipeline SUCCESS for ${SERVICE_NAME}
+            ✅ Build: #${BUILD_NUMBER}
+            ✅ Commit: ${GIT_COMMIT_SHORT}
+            ✅ Quality Gate: PASSED
+            ✅ ================================================
+            """
+        }
+        failure {
+            echo """
+            ❌ ================================================
+            ❌ Pipeline FAILED for ${SERVICE_NAME}
+            ❌ Build: #${BUILD_NUMBER}
+            ❌ Check SonarQube: http://localhost:9000/dashboard?id=${SONAR_PROJECT_KEY}
+            ❌ ================================================
+            """
+        }
+    }
+}

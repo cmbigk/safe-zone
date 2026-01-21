@@ -1,0 +1,35 @@
+# Default code owners for the E-Commerce project
+# These users will be requested for review when a PR is opened
+
+# Global owners - will be requested for all files
+* @team-lead @senior-developer
+
+# Backend Java Services
+/api-gateway/**         @backend-team @team-lead
+/user-service/**        @backend-team @security-lead
+/product-service/**     @backend-team
+/media-service/**       @backend-team
+
+# Frontend Angular Application
+/frontend/**            @frontend-team @ux-lead
+
+# Infrastructure and DevOps
+/deployment/**          @devops-team @team-lead
+/docker-compose*.yml    @devops-team
+/.github/workflows/**   @devops-team
+
+# CI/CD Pipelines
+Jenkinsfile             @devops-team
+**/Jenkinsfile          @devops-team
+
+# Documentation
+/docs/**                @team-lead
+README.md               @team-lead
+
+# SonarQube configuration
+sonar-project.properties    @devops-team @team-lead
+**/sonar-project.properties @devops-team
+
+# Security-sensitive files
+**/.env*                @security-lead @team-lead
+**/application.properties   @backend-team @security-lead
