@@ -3,7 +3,6 @@ package com.ecommerce.userservice.controller;
 import com.ecommerce.userservice.dto.*;
 import com.ecommerce.userservice.service.UserService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,11 +13,14 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class AuthController {
     
     private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
     
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {

@@ -6,8 +6,8 @@ import com.ecommerce.productservice.exception.ResourceNotFoundException;
 import com.ecommerce.productservice.exception.UnauthorizedException;
 import com.ecommerce.productservice.model.Product;
 import com.ecommerce.productservice.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class ProductService {
+    
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     
     private final ProductRepository productRepository;
     private final WebClient.Builder webClientBuilder;
     @Autowired(required = false)
     private KafkaTemplate<String, String> kafkaTemplate;
+    
+    public ProductService(ProductRepository productRepository, WebClient.Builder webClientBuilder) {
+        this.productRepository = productRepository;
+        this.webClientBuilder = webClientBuilder;
+    }
     
     public ProductResponse createProduct(ProductRequest request, String sellerEmail, String sellerId) {
         // Verify user is a seller by calling user-service

@@ -4,7 +4,6 @@ import com.ecommerce.productservice.dto.ProductRequest;
 import com.ecommerce.productservice.dto.ProductResponse;
 import com.ecommerce.productservice.service.ProductService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ProductController {
     
     private final ProductService productService;
+    
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
     
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(

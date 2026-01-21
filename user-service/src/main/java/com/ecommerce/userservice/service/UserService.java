@@ -6,7 +6,6 @@ import com.ecommerce.userservice.exception.UserAlreadyExistsException;
 import com.ecommerce.userservice.model.User;
 import com.ecommerce.userservice.repository.UserRepository;
 import com.ecommerce.userservice.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
     
     private final UserRepository userRepository;
@@ -34,6 +32,14 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     @Autowired(required = false)
     private KafkaTemplate<String, String> kafkaTemplate;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                      JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
+    }
     
     private static final String UPLOAD_DIR = "uploads/avatars/";
     
