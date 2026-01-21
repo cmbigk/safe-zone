@@ -2,7 +2,6 @@ package com.ecommerce.mediaservice.controller;
 
 import com.ecommerce.mediaservice.dto.MediaResponse;
 import com.ecommerce.mediaservice.service.MediaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,11 +18,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/media")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class MediaController {
     
     private final MediaService mediaService;
+    
+    public MediaController(MediaService mediaService) {
+        this.mediaService = mediaService;
+    }
     
     @Value("${media.upload.dir}")
     private String uploadDir;

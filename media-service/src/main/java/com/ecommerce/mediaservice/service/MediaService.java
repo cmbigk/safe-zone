@@ -4,9 +4,9 @@ import com.ecommerce.mediaservice.dto.MediaResponse;
 import com.ecommerce.mediaservice.exception.ResourceNotFoundException;
 import com.ecommerce.mediaservice.model.Media;
 import com.ecommerce.mediaservice.repository.MediaRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,9 +24,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class MediaService {
+    
+    private static final Logger log = LoggerFactory.getLogger(MediaService.class);
     
     private final MediaRepository mediaRepository;
     private final Tika tika = new Tika();
@@ -40,6 +40,10 @@ public class MediaService {
     private static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
     );
+    
+    public MediaService(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
+    }
     
     public MediaResponse uploadMedia(MultipartFile file, String uploadedBy, String productId) throws IOException {
         // Validate file is not empty
