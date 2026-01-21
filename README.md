@@ -21,7 +21,7 @@ This project includes a complete Jenkins CI/CD setup with:
 - ✅ Automated testing (JUnit + Jasmine/Karma)
 - ✅ Blue-green deployment with rollback
 - ✅ Email & Slack notifications
-- ✅ GitHub webhook integration
+- ✅ GitHub webhook integration (instant trigger on push)
 - ✅ Parameterized builds (dev/staging/production)
 
 **Quick Start CI/CD:**
