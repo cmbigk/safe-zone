@@ -1,0 +1,193 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven 'Maven-3.9'
+        jdk 'JDK-21'
+    }
+    
+    environment {
+        SERVICE_NAME = 'media-service'
+        DOCKER_IMAGE = "ecommerce/${SERVICE_NAME}"
+        DOCKER_TAG = "${BUILD_NUMBER}"
+        SONAR_PROJECT_KEY = 'ecommerce-media-service'
+    }
+    
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Deployment Environment')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip tests?')
+        booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy after build?')
+        booleanParam(name: 'SKIP_SONAR', defaultValue: false, description: 'Skip SonarQube analysis?')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "🔄 Checking out ${SERVICE_NAME}..."
+                checkout scm
+                script {
+                    env.GIT_COMMIT_SHORT = sh(
+                        script: "git rev-parse --short HEAD",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                dir('media-service') {
+                    echo "🔨 Building ${SERVICE_NAME}..."
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            when {
+                expression { params.SKIP_TESTS == false }
+            }
+            steps {
+                dir('media-service') {
+                    echo "🧪 Running unit tests for ${SERVICE_NAME}..."
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                    jacoco(
+                        execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java'
+                    )
+                }
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            when {
+                expression { params.SKIP_SONAR == false }
+            }
+            steps {
+                dir('media-service') {
+                    echo "📊 Running SonarQube analysis for ${SERVICE_NAME}..."
+                    script {
+                        withSonarQubeEnv('SonarQube-Local') {
+                            sh '''
+                                mvn sonar:sonar \
+                                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                  -Dsonar.projectName="E-Commerce Media Service" \
+                                  -Dsonar.sources=src/main/java \
+                                  -Dsonar.tests=src/test/java \
+                                  -Dsonar.java.binaries=target/classes \
+                                  -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            when {
+                expression { params.SKIP_SONAR == false }
+            }
+            steps {
+                echo "⏳ Waiting for SonarQube Quality Gate..."
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "❌ Quality Gate failed: ${qg.status}"
+                        } else {
+                            echo "✅ Quality Gate passed!"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Package') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                dir('media-service') {
+                    echo "📦 Packaging ${SERVICE_NAME}..."
+                    sh 'mvn package -DskipTests'
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                }
+            }
+        }
+        
+        stage('Docker Build') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                dir('media-service') {
+                    echo "🐳 Building Docker image for ${SERVICE_NAME}..."
+                    script {
+                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                        docker.build("${DOCKER_IMAGE}:latest")
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                allOf {
+                    expression { params.DEPLOY == true }
+                    expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                }
+            }
+            steps {
+                script {
+                    echo "🚀 Deploying ${SERVICE_NAME} to ${params.ENVIRONMENT}..."
+                    sh """
+                        docker stop ${SERVICE_NAME} 2>/dev/null || true
+                        docker rm ${SERVICE_NAME} 2>/dev/null || true
+                        docker run -d \
+                            --name ${SERVICE_NAME} \
+                            --network ecommerce-network \
+                            -p 8083:8080 \
+                            -e ENVIRONMENT=${params.ENVIRONMENT} \
+                            ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    """
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo "🧹 Cleaning workspace..."
+            cleanWs()
+        }
+        success {
+            echo """
+            ✅ ================================================
+            ✅ Pipeline SUCCESS for ${SERVICE_NAME}
+            ✅ Build: #${BUILD_NUMBER}
+            ✅ Commit: ${GIT_COMMIT_SHORT}
+            ✅ Quality Gate: PASSED
+            ✅ ================================================
+            """
+        }
+        failure {
+            echo """
+            ❌ ================================================
+            ❌ Pipeline FAILED for ${SERVICE_NAME}
+            ❌ Build: #${BUILD_NUMBER}
+            ❌ Check SonarQube: http://localhost:9000/dashboard?id=${SONAR_PROJECT_KEY}
+            ❌ ================================================
+            """
+        }
+    }
+}
