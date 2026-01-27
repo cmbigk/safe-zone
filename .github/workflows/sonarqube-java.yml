@@ -81,14 +81,14 @@ jobs:
       
       - name: 📋 Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.service }}
           path: ${{ matrix.service }}/target/surefire-reports/
       
       - name: 📋 Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.service }}
           path: ${{ matrix.service }}/target/site/jacoco/
