@@ -62,8 +62,7 @@ jobs:
         run: |
           mvn clean verify \
             -B \
-            -Dmaven.test.failure.ignore=false \
-            -Djacoco.skip=true
+            -Dmaven.test.failure.ignore=false
       
       - name: 📊 SonarQube Scan
         working-directory: ./${{ matrix.service }}
