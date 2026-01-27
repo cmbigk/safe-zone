@@ -70,3 +70,4 @@ user-service/uploads/avatars/*
 # Environment files
 .env
 .env.local
+Test for GitHub Actions workflow
