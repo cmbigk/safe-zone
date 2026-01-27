@@ -24,12 +24,14 @@ public class ProductService {
     
     private final ProductRepository productRepository;
     private final WebClient.Builder webClientBuilder;
-    @Autowired(required = false)
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
     
-    public ProductService(ProductRepository productRepository, WebClient.Builder webClientBuilder) {
+    public ProductService(ProductRepository productRepository, 
+                         WebClient.Builder webClientBuilder,
+                         @Autowired(required = false) KafkaTemplate<String, String> kafkaTemplate) {
         this.productRepository = productRepository;
         this.webClientBuilder = webClientBuilder;
+        this.kafkaTemplate = kafkaTemplate;
     }
     
     public ProductResponse createProduct(ProductRequest request, String sellerEmail, String sellerId) {
@@ -122,13 +124,13 @@ public class ProductService {
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream()
                 .map(this::mapToProductResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     public List<ProductResponse> getProductsBySeller(String sellerEmail) {
         return productRepository.findBySellerEmail(sellerEmail).stream()
                 .map(this::mapToProductResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     public void updateSellerInfo(String sellerEmail, String sellerName, String sellerAvatar) {
@@ -147,7 +149,7 @@ public class ProductService {
     public List<ProductResponse> getProductsByCategory(String category) {
         return productRepository.findByCategory(category).stream()
                 .map(this::mapToProductResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     private boolean verifyUserIsSeller(String email) {

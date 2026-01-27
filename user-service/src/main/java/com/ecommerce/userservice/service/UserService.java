@@ -30,15 +30,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    @Autowired(required = false)
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                      JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+    public UserService(UserRepository userRepository, 
+                      PasswordEncoder passwordEncoder,
+                      JwtTokenProvider jwtTokenProvider, 
+                      AuthenticationManager authenticationManager,
+                      @Autowired(required = false) KafkaTemplate<String, String> kafkaTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
+        this.kafkaTemplate = kafkaTemplate;
     }
     
     private static final String UPLOAD_DIR = "uploads/avatars/";
