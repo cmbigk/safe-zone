@@ -57,7 +57,7 @@ Then open http://localhost:8090
 - ✅ JWT-based authentication
 - ✅ Profile management (get/update with authorization)
 - ✅ Avatar upload (2MB limit, image validation)
-- ✅ User can only update own profile (JWT validation)
+- ✅ User can only update own profile (JWT)
 
 ### Product Management (product-service)
 - ✅ CRUD operations (sellers only)
