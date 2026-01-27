@@ -1,6 +1,7 @@
 package com.ecommerce.mediaservice.controller;
 
 import com.ecommerce.mediaservice.dto.MediaResponse;
+import com.ecommerce.mediaservice.exception.FileOperationException;
 import com.ecommerce.mediaservice.service.MediaService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -78,10 +79,12 @@ public class MediaController {
                         .contentType(MediaType.parseMediaType(mediaResponse.getContentType()))
                         .body(resource);
             } else {
-                throw new RuntimeException("Could not read file: " + mediaResponse.getFilename());
+                throw new FileOperationException("Could not read file: " + mediaResponse.getFilename());
             }
+        } catch (FileOperationException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error: " + e.getMessage());
+            throw new FileOperationException("Error serving file: " + e.getMessage(), e);
         }
     }
 }

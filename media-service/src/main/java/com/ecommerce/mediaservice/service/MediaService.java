@@ -29,20 +29,21 @@ public class MediaService {
     private static final Logger log = LoggerFactory.getLogger(MediaService.class);
     
     private final MediaRepository mediaRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final String uploadDir;
     private final Tika tika = new Tika();
-    @Autowired(required = false)
-    private KafkaTemplate<String, String> kafkaTemplate;
     
-    @Value("${media.upload.dir}")
-    private String uploadDir;
-    
-    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+    private static final long MAX_FILE_SIZE = 2L * 1024 * 1024; // 2MB
     private static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
     );
     
-    public MediaService(MediaRepository mediaRepository) {
+    public MediaService(MediaRepository mediaRepository, 
+                       @Autowired(required = false) KafkaTemplate<String, String> kafkaTemplate,
+                       @Value("${media.upload.dir}") String uploadDir) {
         this.mediaRepository = mediaRepository;
+        this.kafkaTemplate = kafkaTemplate;
+        this.uploadDir = uploadDir;
     }
     
     public MediaResponse uploadMedia(MultipartFile file, String uploadedBy, String productId) throws IOException {
@@ -115,13 +116,13 @@ public class MediaService {
     public List<MediaResponse> getMediaByProductId(String productId) {
         return mediaRepository.findByProductId(productId).stream()
                 .map(this::mapToMediaResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     public List<MediaResponse> getMediaByUser(String userEmail) {
         return mediaRepository.findByUploadedBy(userEmail).stream()
                 .map(this::mapToMediaResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     public void deleteMedia(String id) {
