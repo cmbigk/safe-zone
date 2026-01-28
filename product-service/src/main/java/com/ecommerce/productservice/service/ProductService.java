@@ -11,26 +11,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class ProductService {
     
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
+    private static final String PRODUCT_EVENTS_TOPIC = "product-events";
+    private static final String PRODUCT_NOT_FOUND_MESSAGE = "Product not found with id: ";
     
     private final ProductRepository productRepository;
-    private final WebClient.Builder webClientBuilder;
+ 
     private final KafkaTemplate<String, String> kafkaTemplate;
     
     public ProductService(ProductRepository productRepository, 
-                         WebClient.Builder webClientBuilder,
                          @Autowired(required = false) KafkaTemplate<String, String> kafkaTemplate) {
         this.productRepository = productRepository;
-        this.webClientBuilder = webClientBuilder;
+
         this.kafkaTemplate = kafkaTemplate;
     }
     
@@ -60,7 +61,7 @@ public class ProductService {
         
         // Publish event to Kafka
         if (kafkaTemplate != null) {
-            kafkaTemplate.send("product-events", "PRODUCT_CREATED:" + savedProduct.getId() + ":" + sellerEmail);
+            kafkaTemplate.send(PRODUCT_EVENTS_TOPIC, "PRODUCT_CREATED:" + savedProduct.getId() + ":" + sellerEmail);
         }
         
         return mapToProductResponse(savedProduct);
@@ -68,7 +69,7 @@ public class ProductService {
     
     public ProductResponse updateProduct(String productId, ProductRequest request, String sellerEmail) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE + productId));
         
         // Verify the seller owns this product
         if (!product.getSellerEmail().equals(sellerEmail)) {
@@ -90,7 +91,7 @@ public class ProductService {
         
         // Publish event to Kafka
         if (kafkaTemplate != null) {
-            kafkaTemplate.send("product-events", "PRODUCT_UPDATED:" + productId + ":" + sellerEmail);
+            kafkaTemplate.send(PRODUCT_EVENTS_TOPIC, "PRODUCT_UPDATED:" + productId + ":" + sellerEmail);
         }
         
         return mapToProductResponse(updatedProduct);
@@ -98,7 +99,7 @@ public class ProductService {
     
     public void deleteProduct(String productId, String sellerEmail) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE + productId));
         
         // Verify the seller owns this product
         if (!product.getSellerEmail().equals(sellerEmail)) {
@@ -110,13 +111,13 @@ public class ProductService {
         
         // Publish event to Kafka
         if (kafkaTemplate != null) {
-            kafkaTemplate.send("product-events", "PRODUCT_DELETED:" + productId + ":" + sellerEmail);
+            kafkaTemplate.send(PRODUCT_EVENTS_TOPIC, "PRODUCT_DELETED:" + productId + ":" + sellerEmail);
         }
     }
     
     public ProductResponse getProductById(String productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE + productId));
         
         return mapToProductResponse(product);
     }
