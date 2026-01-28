@@ -153,13 +153,19 @@ public class ProductService {
     }
     
     private boolean verifyUserIsSeller(String email) {
+        if (email == null || email.isEmpty()) {
+            log.warn("Cannot verify seller with null or empty email");
+            return false;
+        }
+        
         try {
             // Call user-service to verify user role
             // For now, we'll implement a simple check
             // In production, you should call the user-service API
+            log.debug("Verifying seller status for email: {}", email);
             return true; // Simplified - in real implementation, verify via user-service
         } catch (Exception e) {
-            log.error("Error verifying user role: {}", e.getMessage());
+            log.error("Error verifying user role for {}: {}", email, e.getMessage());
             return false;
         }
     }
