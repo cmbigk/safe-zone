@@ -43,73 +43,84 @@ class ProductServiceTest {
     private ProductService productService;
 
     private Product testProduct;
-    private ProductRequest productRequest;
+
+    // Test constants
+    private static final String TEST_PRODUCT_ID = "product123";
+
+    private static final String TEST_PRODUCT_NAME = "Test Product";
+
+    private static final String TEST_DESCRIPTION = "Test Description";
+    private static final BigDecimal TEST_PRICE = new BigDecimal("99.99");
+
+    private static final int TEST_STOCK = 100;
+
+    private static final String TEST_CATEGORY = "Electronics";
+    private static final String TEST_SELLER_ID = "seller123";
+    private static final String TEST_SELLER_EMAIL = "seller@example.com";
+    private static final String TEST_SELLER_NAME = "John Seller";
+    private static final String DIFFERENT_SELLER_EMAIL = "differentseller@example.com";
+    private static final String NONEXISTENT_ID = "nonexistent";
+    private static final String UPDATED_SELLER_NAME = "Updated Name";
+    private static final String UPDATED_AVATAR = "/new-avatar.jpg";
+
 
     @BeforeEach
     void setUp() {
         testProduct = new Product();
-        testProduct.setId("product123");
-        testProduct.setName("Test Product");
-        testProduct.setDescription("Test Description");
-        testProduct.setPrice(new BigDecimal("99.99"));
-        testProduct.setStock(100);
-        testProduct.setCategory("Electronics");
-        testProduct.setSellerId("seller123");
-        testProduct.setSellerEmail("seller@example.com");
-        testProduct.setSellerName("John Seller");
+        testProduct.setId(TEST_PRODUCT_ID);
+        testProduct.setName(TEST_PRODUCT_NAME);
+        testProduct.setDescription(TEST_DESCRIPTION);
+        testProduct.setPrice(TEST_PRICE);
+        testProduct.setStock(TEST_STOCK);
+        testProduct.setCategory(TEST_CATEGORY);
+        testProduct.setSellerId(TEST_SELLER_ID);
+        testProduct.setSellerEmail(TEST_SELLER_EMAIL);
+        testProduct.setSellerName(TEST_SELLER_NAME);
 
-        productRequest = new ProductRequest();
-        productRequest.setName("Test Product");
-        productRequest.setDescription("Test Description");
-        productRequest.setPrice(new BigDecimal("99.99"));
-        productRequest.setStock(100);
-        productRequest.setCategory("Electronics");
-        productRequest.setSellerName("John Seller");
-        productRequest.setSellerAvatar("/avatars/seller.jpg");
     }
 
     @Test
     @DisplayName("Should successfully retrieve product by ID")
-    void testGetProductById_Success() {
+    void testGetProductByIdSuccess() {
         // Arrange
-        when(productRepository.findById("product123")).thenReturn(Optional.of(testProduct));
+        when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(testProduct));
 
         // Act
-        ProductResponse response = productService.getProductById("product123");
+        ProductResponse response = productService.getProductById(TEST_PRODUCT_ID);
 
         // Assert
         assertNotNull(response);
-        assertEquals("product123", response.getId());
-        assertEquals("Test Product", response.getName());
-        assertEquals(new BigDecimal("99.99"), response.getPrice());
-        assertEquals(100, response.getStock());
+        assertEquals(TEST_PRODUCT_ID, response.getId());
+        assertEquals(TEST_PRODUCT_NAME, response.getName());
+        assertEquals(TEST_PRICE, response.getPrice());
+        assertEquals(TEST_STOCK, response.getStock());
         
-        verify(productRepository).findById("product123");
+        verify(productRepository).findById(TEST_PRODUCT_ID);
     }
 
     @Test
     @DisplayName("Should throw exception when product not found by ID")
-    void testGetProductById_NotFound() {
+    void testGetProductByIdNotFound() {
         // Arrange
         when(productRepository.findById(anyString())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> {
-            productService.getProductById("nonexistent");
-        });
+        assertThrows(ResourceNotFoundException.class, () -> 
+            productService.getProductById(NONEXISTENT_ID)
+        );
 
-        verify(productRepository).findById("nonexistent");
+        verify(productRepository).findById(NONEXISTENT_ID);
     }
 
     @Test
     @DisplayName("Should retrieve all products successfully")
-    void testGetAllProducts_Success() {
+    void testGetAllProductsSuccess() {
         // Arrange
         Product product2 = new Product();
-        product2.setId("product456");
-        product2.setName("Another Product");
-        product2.setPrice(new BigDecimal("49.99"));
-        product2.setStock(50);
+        product2.setId(TEST_PRODUCT_ID);
+        product2.setName(TEST_PRODUCT_NAME);
+        product2.setPrice(TEST_PRICE);
+        product2.setStock(TEST_STOCK);
 
         when(productRepository.findAll()).thenReturn(Arrays.asList(testProduct, product2));
 
@@ -119,110 +130,110 @@ class ProductServiceTest {
         // Assert
         assertNotNull(products);
         assertEquals(2, products.size());
-        assertEquals("Test Product", products.get(0).getName());
-        assertEquals("Another Product", products.get(1).getName());
+        assertEquals(TEST_PRODUCT_NAME, products.get(0).getName());
+        assertEquals(TEST_PRODUCT_NAME, products.get(1).getName());
         
         verify(productRepository).findAll();
     }
 
     @Test
     @DisplayName("Should retrieve products by seller email")
-    void testGetProductsBySeller_Success() {
+    void testGetProductsBySellerSuccess() {
         // Arrange
         Product product2 = new Product();
-        product2.setId("product456");
+        product2.setId(TEST_PRODUCT_ID);
         product2.setName("Seller Product 2");
-        product2.setSellerEmail("seller@example.com");
+        product2.setSellerEmail(TEST_SELLER_EMAIL);
 
-        when(productRepository.findBySellerEmail("seller@example.com"))
+        when(productRepository.findBySellerEmail(TEST_SELLER_EMAIL))
                 .thenReturn(Arrays.asList(testProduct, product2));
 
         // Act
-        List<ProductResponse> products = productService.getProductsBySeller("seller@example.com");
+        List<ProductResponse> products = productService.getProductsBySeller(TEST_SELLER_EMAIL);
 
         // Assert
         assertNotNull(products);
         assertEquals(2, products.size());
-        assertTrue(products.stream().allMatch(p -> p.getSellerEmail().equals("seller@example.com")));
+        assertTrue(products.stream().allMatch(p -> p.getSellerEmail().equals(TEST_SELLER_EMAIL)));
         
-        verify(productRepository).findBySellerEmail("seller@example.com");
+        verify(productRepository).findBySellerEmail(TEST_SELLER_EMAIL);
     }
 
     @Test
     @DisplayName("Should retrieve products by category")
-    void testGetProductsByCategory_Success() {
+    void testGetProductsByCategorySuccess() {
         // Arrange
         Product product2 = new Product();
-        product2.setId("product456");
+        product2.setId(TEST_PRODUCT_ID);
         product2.setName("Electronics Item");
-        product2.setCategory("Electronics");
+        product2.setCategory(TEST_CATEGORY);
 
-        when(productRepository.findByCategory("Electronics"))
+        when(productRepository.findByCategory(TEST_CATEGORY))
                 .thenReturn(Arrays.asList(testProduct, product2));
 
         // Act
-        List<ProductResponse> products = productService.getProductsByCategory("Electronics");
+        List<ProductResponse> products = productService.getProductsByCategory(TEST_CATEGORY);
 
         // Assert
         assertNotNull(products);
         assertEquals(2, products.size());
-        assertTrue(products.stream().allMatch(p -> p.getCategory().equals("Electronics")));
+        assertTrue(products.stream().allMatch(p -> p.getCategory().equals(TEST_CATEGORY)));
         
-        verify(productRepository).findByCategory("Electronics");
+        verify(productRepository).findByCategory(TEST_CATEGORY);
     }
 
     @Test
     @DisplayName("Should delete product when seller owns it")
-    void testDeleteProduct_Success() {
+    void testDeleteProductSuccess() {
         // Arrange
-        when(productRepository.findById("product123")).thenReturn(Optional.of(testProduct));
-        doNothing().when(productRepository).deleteById("product123");
+        when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(testProduct));
+        doNothing().when(productRepository).deleteById(TEST_PRODUCT_ID);
 
         // Act
-        productService.deleteProduct("product123", "seller@example.com");
+        productService.deleteProduct(TEST_PRODUCT_ID, TEST_SELLER_EMAIL);
 
         // Assert
-        verify(productRepository).findById("product123");
-        verify(productRepository).deleteById("product123");
+        verify(productRepository).findById(TEST_PRODUCT_ID);
+        verify(productRepository).deleteById(TEST_PRODUCT_ID);
     }
 
     @Test
     @DisplayName("Should throw exception when deleting product owned by another seller")
-    void testDeleteProduct_Unauthorized() {
+    void testDeleteProductUnauthorized() {
         // Arrange
-        when(productRepository.findById("product123")).thenReturn(Optional.of(testProduct));
+        when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(testProduct));
 
         // Act & Assert
-        assertThrows(UnauthorizedException.class, () -> {
-            productService.deleteProduct("product123", "differentseller@example.com");
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            productService.deleteProduct(TEST_PRODUCT_ID, DIFFERENT_SELLER_EMAIL)
+        );
 
-        verify(productRepository).findById("product123");
+        verify(productRepository).findById(TEST_PRODUCT_ID);
         verify(productRepository, never()).deleteById(anyString());
     }
 
     @Test
     @DisplayName("Should update seller info for all products by seller")
-    void testUpdateSellerInfo_Success() {
+    void testUpdateSellerInfoSuccess() {
         // Arrange
         Product product2 = new Product();
-        product2.setId("product456");
-        product2.setSellerEmail("seller@example.com");
+        product2.setId(TEST_PRODUCT_ID);
+        product2.setSellerEmail(TEST_SELLER_EMAIL);
         
         List<Product> sellerProducts = Arrays.asList(testProduct, product2);
-        when(productRepository.findBySellerEmail("seller@example.com")).thenReturn(sellerProducts);
+        when(productRepository.findBySellerEmail(TEST_SELLER_EMAIL)).thenReturn(sellerProducts);
         when(productRepository.saveAll(any())).thenReturn(sellerProducts);
 
         // Act
-        productService.updateSellerInfo("seller@example.com", "Updated Name", "/new-avatar.jpg");
+        productService.updateSellerInfo(TEST_SELLER_EMAIL, UPDATED_SELLER_NAME, UPDATED_AVATAR);
 
         // Assert
-        verify(productRepository).findBySellerEmail("seller@example.com");
+        verify(productRepository).findBySellerEmail(TEST_SELLER_EMAIL);
         verify(productRepository).saveAll(argThat(products -> {
             List<Product> productList = (List<Product>) products;
             return productList.size() == 2 &&
-                   productList.stream().allMatch(p -> p.getSellerName().equals("Updated Name")) &&
-                   productList.stream().allMatch(p -> p.getSellerAvatar().equals("/new-avatar.jpg"));
+                   productList.stream().allMatch(p -> p.getSellerName().equals(UPDATED_SELLER_NAME)) &&
+                   productList.stream().allMatch(p -> p.getSellerAvatar().equals(UPDATED_AVATAR));
         }));
     }
 }

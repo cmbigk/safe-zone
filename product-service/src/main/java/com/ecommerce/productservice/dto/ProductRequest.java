@@ -32,14 +32,13 @@ public class ProductRequest {
     public ProductRequest() {
     }
 
-    public ProductRequest(String name, String description, BigDecimal price, Integer stock, String category, String sellerName, String sellerAvatar, List<String> imageIds) {
+    public ProductRequest(String name, String description, BigDecimal price, Integer stock, String category, String sellerName, List<String> imageIds) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.category = category;
         this.sellerName = sellerName;
-        this.sellerAvatar = sellerAvatar;
         this.imageIds = imageIds;
     }
 

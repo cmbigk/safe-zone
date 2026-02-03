@@ -74,7 +74,7 @@ public class UserService {
         
         return new AuthResponse(token, userResponse);
     }
-    
+    String notfound= "User not found";
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -84,7 +84,7 @@ public class UserService {
         String token = jwtTokenProvider.generateToken(authentication);
         
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(notfound));
         
         UserResponse userResponse = mapToUserResponse(user);
         return new AuthResponse(token, userResponse);
@@ -92,14 +92,14 @@ public class UserService {
     
     public UserResponse getProfile(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(notfound));
         
         return mapToUserResponse(user);
     }
     
     public UserResponse updateProfile(String email, UpdateProfileRequest request) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(notfound));
         
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -113,7 +113,7 @@ public class UserService {
     
     public UserResponse uploadAvatar(String email, MultipartFile file) throws IOException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(notfound));
         
         // Validate file size (2MB max)
         if (file.getSize() > 2 * 1024 * 1024) {
@@ -150,7 +150,7 @@ public class UserService {
     
     public UserResponse getUserById(String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(notfound+"with id: " + userId));
         
         return mapToUserResponse(user);
     }
@@ -158,7 +158,7 @@ public class UserService {
     public UserResponse updateProfileById(String userId, String authenticatedEmail, UpdateProfileRequest request) {
         // Verify the user is updating their own profile
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(notfound + "with id: " + userId));
         
         if (!user.getEmail().equals(authenticatedEmail)) {
             throw new com.ecommerce.userservice.exception.UnauthorizedException(
