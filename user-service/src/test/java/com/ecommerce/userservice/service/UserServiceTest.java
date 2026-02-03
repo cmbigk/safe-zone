@@ -22,8 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,6 +80,7 @@ class UserServiceTest {
     private static final String SELLER_EMAIL = "seller@example.com";
     private static final String SELLER_ID = "seller123";
     private static final String AVATAR_FILE_PARAM = "avatar";
+    private static final String AVATAR_CONTENT = "avatar-content";
     private static final int MAX_FILE_SIZE = 3 * 1024 * 1024;
 
     @BeforeEach
@@ -105,7 +105,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should successfully register a new user")
-    void testRegisterUser_Success() {
+    void testRegisterUserSuccess() {
         // Arrange
         when(userRepository.existsByEmail(registerRequest.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn(ENCODED_PASSWORD);
@@ -129,14 +129,14 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when registering user with existing email")
-    void testRegisterUser_EmailAlreadyExists() {
+    void testRegisterUserEmailAlreadyExists() {
         // Arrange
         when(userRepository.existsByEmail(registerRequest.getEmail())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(UserAlreadyExistsException.class, () -> {
-            userService.register(registerRequest);
-        });
+        assertThrows(UserAlreadyExistsException.class, () ->
+            userService.register(registerRequest)
+        );
 
         verify(userRepository).existsByEmail(registerRequest.getEmail());
         verify(userRepository, never()).save(any(User.class));
@@ -144,7 +144,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should successfully login with valid credentials")
-    void testLogin_Success() {
+    void testLoginSuccess() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(TEST_EMAIL);
@@ -170,7 +170,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should retrieve user profile by email")
-    void testGetProfile_Success() {
+    void testGetProfileSuccess() {
         // Arrange
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(testUser));
 
@@ -188,21 +188,21 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when user profile not found")
-    void testGetProfile_UserNotFound() {
+    void testGetProfileUserNotFound() {
         // Arrange
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> {
-            userService.getProfile(NONEXISTENT_EMAIL);
-        });
+        assertThrows(ResourceNotFoundException.class, () -> 
+            userService.getProfile(NONEXISTENT_EMAIL)
+        );
 
         verify(userRepository).findByEmail(NONEXISTENT_EMAIL);
     }
 
     @Test
     @DisplayName("Should successfully update user profile")
-    void testUpdateProfile_Success() {
+    void testUpdateProfileSuccess() {
         // Arrange
         UpdateProfileRequest updateRequest = new UpdateProfileRequest();
         updateRequest.setFirstName(UPDATED_FIRST_NAME);
@@ -235,7 +235,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should retrieve user by ID")
-    void testGetUserById_Success() {
+    void testGetUserByIdSuccess() {
         // Arrange
         when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(testUser));
 
@@ -252,7 +252,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when getting user by non-existent ID")
-    void testGetUserById_NotFound() {
+    void testGetUserByIdNotFound() {
         // Arrange
         when(userRepository.findById(anyString())).thenReturn(Optional.empty());
 
@@ -266,7 +266,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when updating profile for non-existent user")
-    void testUpdateProfile_UserNotFound() {
+    void testUpdateProfileUserNotFound() {
         // Arrange
         UpdateProfileRequest updateRequest = new UpdateProfileRequest();
         updateRequest.setFirstName(UPDATED_FIRST_NAME);
@@ -286,7 +286,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should successfully update profile by ID")
-    void testUpdateProfileById_Success() {
+    void testUpdateProfileByIdSuccess() {
         // Arrange
         UpdateProfileRequest updateRequest = new UpdateProfileRequest();
         updateRequest.setFirstName(UPDATED_FIRST_NAME);
@@ -322,7 +322,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when updating profile by ID for different user")
-    void testUpdateProfileById_Unauthorized() {
+    void testUpdateProfileByIdUnauthorized() {
         // Arrange
         UpdateProfileRequest updateRequest = new UpdateProfileRequest();
         updateRequest.setFirstName(UPDATED_FIRST_NAME);
@@ -340,7 +340,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when updating profile by non-existent ID")
-    void testUpdateProfileById_NotFound() {
+    void testUpdateProfileByIdNotFound() {
         // Arrange
         UpdateProfileRequest updateRequest = new UpdateProfileRequest();
         updateRequest.setFirstName(UPDATED_FIRST_NAME);
@@ -358,13 +358,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should successfully upload avatar")
-    void testUploadAvatar_Success() throws IOException {
+    void testUploadAvatarSuccess() throws IOException {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
                 AVATAR_FILE_PARAM,
                 AVATAR_FILENAME,
                 IMAGE_JPEG_TYPE,
-                "avatar-content".getBytes()
+                AVATAR_CONTENT.getBytes()
         );
 
         User updatedUser = new User();
@@ -388,7 +388,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should reject avatar file exceeding size limit")
-    void testUploadAvatar_FileTooLarge() {
+    void testUploadAvatarFileTooLarge() {
         // Arrange
         byte[] largeContent = new byte[MAX_FILE_SIZE]; // 3MB
         MockMultipartFile largeFile = new MockMultipartFile(
@@ -411,7 +411,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should reject non-image avatar file")
-    void testUploadAvatar_InvalidFileType() {
+    void testUploadAvatarInvalidFileType() {
         // Arrange
         MockMultipartFile pdfFile = new MockMultipartFile(
                 AVATAR_FILE_PARAM,
@@ -433,13 +433,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when uploading avatar for non-existent user")
-    void testUploadAvatar_UserNotFound() {
+    void testUploadAvatarUserNotFound() {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
                 AVATAR_FILE_PARAM,
                 AVATAR_FILENAME,
                 IMAGE_JPEG_TYPE,
-                "avatar-content".getBytes()
+                AVATAR_CONTENT.getBytes()
         );
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
@@ -455,13 +455,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should successfully upload avatar by ID")
-    void testUploadAvatarById_Success() throws IOException {
+    void testUploadAvatarByIdSuccess() throws IOException {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
                 AVATAR_FILE_PARAM,
                 AVATAR_FILENAME,
                 IMAGE_JPEG_TYPE,
-                "avatar-content".getBytes()
+                AVATAR_CONTENT.getBytes()
         );
 
         User updatedUser = new User();
@@ -485,13 +485,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should throw exception when uploading avatar by ID for different user")
-    void testUploadAvatarById_Unauthorized() {
+    void testUploadAvatarByIdUnauthorized() {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
                 AVATAR_FILE_PARAM,
                 AVATAR_FILENAME,
                 IMAGE_JPEG_TYPE,
-                "avatar-content".getBytes()
+                AVATAR_CONTENT.getBytes()
         );
 
         when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(testUser));
@@ -507,7 +507,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should reject avatar by ID with invalid file type")
-    void testUploadAvatarById_InvalidFileType() {
+    void testUploadAvatarByIdInvalidFileType() {
         // Arrange
         MockMultipartFile pdfFile = new MockMultipartFile(
                 AVATAR_FILE_PARAM,
@@ -529,7 +529,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should register seller successfully")
-    void testRegisterSeller_Success() {
+    void testRegisterSellerSuccess() {
         // Arrange
         RegisterRequest sellerRequest = new RegisterRequest();
         sellerRequest.setEmail(SELLER_EMAIL);
