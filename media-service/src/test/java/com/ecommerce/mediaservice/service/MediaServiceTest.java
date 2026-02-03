@@ -51,6 +51,9 @@ class MediaServiceTest {
     private static final String TEST_PRODUCT_ID = "product123";
     private static final String NONEXISTENT_ID = "nonexistent";
     private static final String PRODUCT_WITHOUT_MEDIA = "product999";
+    private static final String USER_WITHOUT_MEDIA = "nouser@example.com";
+    private static final long TEST_FILE_SIZE = 1024L;
+    private static final String INVALID_CONTENT_TYPE = "application/pdf";
 
     @BeforeEach
     void setUp() throws IOException {
@@ -66,7 +69,7 @@ class MediaServiceTest {
         testMedia.setFilename(TEST_FILENAME);
         testMedia.setOriginalFilename(TEST_ORIGINAL_FILENAME);
         testMedia.setContentType(TEST_CONTENT_TYPE);
-        testMedia.setFileSize(1024L);
+        testMedia.setFileSize(TEST_FILE_SIZE);
         testMedia.setFilePath(TEST_UPLOAD_DIR + TEST_FILENAME);
         testMedia.setUploadedBy(TEST_UPLOADED_BY);
         testMedia.setProductId(TEST_PRODUCT_ID);
@@ -240,5 +243,173 @@ class MediaServiceTest {
         assertTrue(mediaList.isEmpty());
         
         verify(mediaRepository).findByProductId(PRODUCT_WITHOUT_MEDIA);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when user has no media")
+    void testGetMediaByUserEmptyList() {
+        // Arrange
+        when(mediaRepository.findByUploadedBy(USER_WITHOUT_MEDIA)).thenReturn(Arrays.asList());
+
+        // Act
+        List<MediaResponse> mediaList = mediaService.getMediaByUser(USER_WITHOUT_MEDIA);
+
+        // Assert
+        assertNotNull(mediaList);
+        assertTrue(mediaList.isEmpty());
+        
+        verify(mediaRepository).findByUploadedBy(USER_WITHOUT_MEDIA);
+    }
+
+    @Test
+    @DisplayName("Should successfully upload valid image")
+    void testUploadMediaSuccess() throws IOException {
+        // Arrange
+        byte[] validImageContent = "fake-image-content".getBytes();
+        MockMultipartFile validFile = new MockMultipartFile(
+                "file",
+                TEST_ORIGINAL_FILENAME,
+                TEST_CONTENT_TYPE,
+                validImageContent
+        );
+
+        Media savedMedia = new Media();
+        savedMedia.setId(TEST_MEDIA_ID);
+        savedMedia.setFilename("generated-filename.jpg");
+        savedMedia.setOriginalFilename(TEST_ORIGINAL_FILENAME);
+        savedMedia.setContentType(TEST_CONTENT_TYPE);
+        savedMedia.setFileSize((long) validImageContent.length);
+        savedMedia.setUploadedBy(TEST_UPLOADED_BY);
+        savedMedia.setProductId(TEST_PRODUCT_ID);
+
+        when(mediaRepository.save(any(Media.class))).thenReturn(savedMedia);
+
+        // Act
+        MediaResponse response = mediaService.uploadMedia(validFile, TEST_UPLOADED_BY, TEST_PRODUCT_ID);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(TEST_MEDIA_ID, response.getId());
+        assertEquals(TEST_ORIGINAL_FILENAME, response.getOriginalFilename());
+        assertEquals(TEST_CONTENT_TYPE, response.getContentType());
+        assertEquals(TEST_UPLOADED_BY, response.getUploadedBy());
+        assertEquals(TEST_PRODUCT_ID, response.getProductId());
+        
+        verify(mediaRepository).save(any(Media.class));
+    }
+
+    @Test
+    @DisplayName("Should reject non-image file type")
+    void testUploadMediaInvalidFileType() {
+        // Arrange
+        MockMultipartFile pdfFile = new MockMultipartFile(
+                "file",
+                "document.pdf",
+                INVALID_CONTENT_TYPE,
+                "pdf-content".getBytes()
+        );
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+            mediaService.uploadMedia(pdfFile, TEST_UPLOADED_BY, TEST_PRODUCT_ID)
+        );
+
+        assertTrue(exception.getMessage().contains("Only image files are allowed"));
+        verify(mediaRepository, never()).save(any(Media.class));
+    }
+
+    @Test
+    @DisplayName("Should handle delete when file doesn't exist on disk")
+    void testDeleteMediaFileNotOnDisk() {
+        // Arrange
+        testMedia.setFilePath(TEST_UPLOAD_DIR + "nonexistent-file.jpg");
+        when(mediaRepository.findById(TEST_MEDIA_ID)).thenReturn(Optional.of(testMedia));
+        doNothing().when(mediaRepository).deleteById(TEST_MEDIA_ID);
+
+        // Act
+        mediaService.deleteMedia(TEST_MEDIA_ID);
+
+        // Assert - should complete without throwing exception
+        verify(mediaRepository).findById(TEST_MEDIA_ID);
+        verify(mediaRepository).deleteById(TEST_MEDIA_ID);
+    }
+
+    @Test
+    @DisplayName("Should map media to response correctly")
+    void testMapToMediaResponse() {
+        // Arrange
+        when(mediaRepository.findById(TEST_MEDIA_ID)).thenReturn(Optional.of(testMedia));
+
+        // Act
+        MediaResponse response = mediaService.getMediaById(TEST_MEDIA_ID);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(TEST_MEDIA_ID, response.getId());
+        assertEquals(TEST_FILENAME, response.getFilename());
+        assertEquals(TEST_ORIGINAL_FILENAME, response.getOriginalFilename());
+        assertEquals(TEST_CONTENT_TYPE, response.getContentType());
+        assertEquals(TEST_FILE_SIZE, response.getFileSize());
+        assertEquals(TEST_UPLOADED_BY, response.getUploadedBy());
+        assertEquals(TEST_PRODUCT_ID, response.getProductId());
+        assertTrue(response.getUrl().contains(TEST_MEDIA_ID));
+    }
+
+    @Test
+    @DisplayName("Should retrieve multiple media items for product")
+    void testGetMediaByProductIdMultiple() {
+        // Arrange
+        Media media2 = new Media();
+        media2.setId("media789");
+        media2.setFilename("image2.jpg");
+        media2.setProductId(TEST_PRODUCT_ID);
+        media2.setUploadedBy(TEST_UPLOADED_BY);
+
+        Media media3 = new Media();
+        media3.setId("media012");
+        media3.setFilename("image3.jpg");
+        media3.setProductId(TEST_PRODUCT_ID);
+        media3.setUploadedBy(TEST_UPLOADED_BY);
+
+        when(mediaRepository.findByProductId(TEST_PRODUCT_ID))
+                .thenReturn(Arrays.asList(testMedia, media2, media3));
+
+        // Act
+        List<MediaResponse> mediaList = mediaService.getMediaByProductId(TEST_PRODUCT_ID);
+
+        // Assert
+        assertNotNull(mediaList);
+        assertEquals(3, mediaList.size());
+        assertTrue(mediaList.stream().allMatch(m -> m.getProductId().equals(TEST_PRODUCT_ID)));
+        
+        verify(mediaRepository).findByProductId(TEST_PRODUCT_ID);
+    }
+
+    @Test
+    @DisplayName("Should retrieve multiple media items for user")
+    void testGetMediaByUserMultiple() {
+        // Arrange
+        Media media2 = new Media();
+        media2.setId("media789");
+        media2.setFilename("user-image2.jpg");
+        media2.setUploadedBy(TEST_UPLOADED_BY);
+
+        Media media3 = new Media();
+        media3.setId("media012");
+        media3.setFilename("user-image3.jpg");
+        media3.setUploadedBy(TEST_UPLOADED_BY);
+
+        when(mediaRepository.findByUploadedBy(TEST_UPLOADED_BY))
+                .thenReturn(Arrays.asList(testMedia, media2, media3));
+
+        // Act
+        List<MediaResponse> mediaList = mediaService.getMediaByUser(TEST_UPLOADED_BY);
+
+        // Assert
+        assertNotNull(mediaList);
+        assertEquals(3, mediaList.size());
+        assertTrue(mediaList.stream().allMatch(m -> m.getUploadedBy().equals(TEST_UPLOADED_BY)));
+        
+        verify(mediaRepository).findByUploadedBy(TEST_UPLOADED_BY);
     }
 }

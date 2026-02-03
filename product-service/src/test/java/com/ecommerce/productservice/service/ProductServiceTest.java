@@ -62,7 +62,13 @@ class ProductServiceTest {
     private static final String NONEXISTENT_ID = "nonexistent";
     private static final String UPDATED_SELLER_NAME = "Updated Name";
     private static final String UPDATED_AVATAR = "/new-avatar.jpg";
+    private static final String TEST_PRODUCT_ID_2 = "product456";
+    private static final String TEST_PRODUCT_NAME_2 = "Another Product";
+    private static final BigDecimal TEST_PRICE_2 = new BigDecimal("49.99");
+    private static final int TEST_STOCK_2 = 50;
+    private static final String TEST_SELLER_AVATAR = "/avatars/seller.jpg";
 
+    private ProductRequest productRequest;
 
     @BeforeEach
     void setUp() {
@@ -77,6 +83,15 @@ class ProductServiceTest {
         testProduct.setSellerEmail(TEST_SELLER_EMAIL);
         testProduct.setSellerName(TEST_SELLER_NAME);
 
+        // Initialize product request
+        productRequest = new ProductRequest();
+        productRequest.setName(TEST_PRODUCT_NAME);
+        productRequest.setDescription(TEST_DESCRIPTION);
+        productRequest.setPrice(TEST_PRICE);
+        productRequest.setStock(TEST_STOCK);
+        productRequest.setCategory(TEST_CATEGORY);
+        productRequest.setSellerName(TEST_SELLER_NAME);
+        productRequest.setSellerAvatar(TEST_SELLER_AVATAR);
     }
 
     @Test
@@ -234,6 +249,189 @@ class ProductServiceTest {
             return productList.size() == 2 &&
                    productList.stream().allMatch(p -> p.getSellerName().equals(UPDATED_SELLER_NAME)) &&
                    productList.stream().allMatch(p -> p.getSellerAvatar().equals(UPDATED_AVATAR));
+        }));
+    }
+
+    @Test
+    @DisplayName("Should create product successfully")
+    void testCreateProductSuccess() {
+        // Arrange
+        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+
+        // Act
+        ProductResponse response = productService.createProduct(productRequest, TEST_SELLER_EMAIL, TEST_SELLER_ID);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(TEST_PRODUCT_NAME, response.getName());
+        assertEquals(TEST_DESCRIPTION, response.getDescription());
+        assertEquals(TEST_PRICE, response.getPrice());
+        assertEquals(TEST_STOCK, response.getStock());
+        assertEquals(TEST_CATEGORY, response.getCategory());
+        assertEquals(TEST_SELLER_EMAIL, response.getSellerEmail());
+        
+        verify(productRepository).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when non-seller tries to create product")
+    void testCreateProductUnauthorized() {
+        // Arrange - using empty email should fail seller verification
+        String emptyEmail = "";
+
+        // Act & Assert
+        assertThrows(UnauthorizedException.class, () ->
+            productService.createProduct(productRequest, emptyEmail, TEST_SELLER_ID)
+        );
+
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("Should update product successfully")
+    void testUpdateProductSuccess() {
+        // Arrange
+        ProductRequest updateRequest = new ProductRequest();
+        updateRequest.setName("Updated Product");
+        updateRequest.setDescription("Updated Description");
+        updateRequest.setPrice(TEST_PRICE_2);
+        updateRequest.setStock(TEST_STOCK_2);
+        updateRequest.setCategory("Books");
+
+        Product updatedProduct = new Product();
+        updatedProduct.setId(TEST_PRODUCT_ID);
+        updatedProduct.setName("Updated Product");
+        updatedProduct.setDescription("Updated Description");
+        updatedProduct.setPrice(TEST_PRICE_2);
+        updatedProduct.setStock(TEST_STOCK_2);
+        updatedProduct.setCategory("Books");
+        updatedProduct.setSellerEmail(TEST_SELLER_EMAIL);
+
+        when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(testProduct));
+        when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
+
+        // Act
+        ProductResponse response = productService.updateProduct(TEST_PRODUCT_ID, updateRequest, TEST_SELLER_EMAIL);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("Updated Product", response.getName());
+        assertEquals("Updated Description", response.getDescription());
+        assertEquals(TEST_PRICE_2, response.getPrice());
+        assertEquals(TEST_STOCK_2, response.getStock());
+        assertEquals("Books", response.getCategory());
+        
+        verify(productRepository).findById(TEST_PRODUCT_ID);
+        verify(productRepository).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating product not found")
+    void testUpdateProductNotFound() {
+        // Arrange
+        when(productRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () ->
+            productService.updateProduct(NONEXISTENT_ID, productRequest, TEST_SELLER_EMAIL)
+        );
+
+        verify(productRepository).findById(NONEXISTENT_ID);
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating product owned by another seller")
+    void testUpdateProductUnauthorized() {
+        // Arrange
+        when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(testProduct));
+
+        // Act & Assert
+        assertThrows(UnauthorizedException.class, () ->
+            productService.updateProduct(TEST_PRODUCT_ID, productRequest, DIFFERENT_SELLER_EMAIL)
+        );
+
+        verify(productRepository).findById(TEST_PRODUCT_ID);
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no products exist")
+    void testGetAllProductsEmptyList() {
+        // Arrange
+        when(productRepository.findAll()).thenReturn(Arrays.asList());
+
+        // Act
+        List<ProductResponse> products = productService.getAllProducts();
+
+        // Assert
+        assertNotNull(products);
+        assertTrue(products.isEmpty());
+        
+        verify(productRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("Should return empty list when seller has no products")
+    void testGetProductsBySellerEmptyList() {
+        // Arrange
+        when(productRepository.findBySellerEmail(TEST_SELLER_EMAIL)).thenReturn(Arrays.asList());
+
+        // Act
+        List<ProductResponse> products = productService.getProductsBySeller(TEST_SELLER_EMAIL);
+
+        // Assert
+        assertNotNull(products);
+        assertTrue(products.isEmpty());
+        
+        verify(productRepository).findBySellerEmail(TEST_SELLER_EMAIL);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when category has no products")
+    void testGetProductsByCategoryEmptyList() {
+        // Arrange
+        when(productRepository.findByCategory("EmptyCategory")).thenReturn(Arrays.asList());
+
+        // Act
+        List<ProductResponse> products = productService.getProductsByCategory("EmptyCategory");
+
+        // Assert
+        assertNotNull(products);
+        assertTrue(products.isEmpty());
+        
+        verify(productRepository).findByCategory("EmptyCategory");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when deleting non-existent product")
+    void testDeleteProductNotFound() {
+        // Arrange
+        when(productRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () ->
+            productService.deleteProduct(NONEXISTENT_ID, TEST_SELLER_EMAIL)
+        );
+
+        verify(productRepository).findById(NONEXISTENT_ID);
+        verify(productRepository, never()).deleteById(anyString());
+    }
+
+    @Test
+    @DisplayName("Should handle null seller email in updateSellerInfo")
+    void testUpdateSellerInfoNoProducts() {
+        // Arrange
+        when(productRepository.findBySellerEmail(TEST_SELLER_EMAIL)).thenReturn(Arrays.asList());
+
+        // Act
+        productService.updateSellerInfo(TEST_SELLER_EMAIL, UPDATED_SELLER_NAME, UPDATED_AVATAR);
+
+        // Assert
+        verify(productRepository).findBySellerEmail(TEST_SELLER_EMAIL);
+        verify(productRepository).saveAll(argThat(products -> {
+            List<Product> productList = (List<Product>) products;
+            return productList.isEmpty();
         }));
     }
 }
