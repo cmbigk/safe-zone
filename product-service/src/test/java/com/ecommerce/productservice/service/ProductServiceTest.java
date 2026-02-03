@@ -62,11 +62,16 @@ class ProductServiceTest {
     private static final String NONEXISTENT_ID = "nonexistent";
     private static final String UPDATED_SELLER_NAME = "Updated Name";
     private static final String UPDATED_AVATAR = "/new-avatar.jpg";
-    private static final String TEST_PRODUCT_ID_2 = "product456";
-    private static final String TEST_PRODUCT_NAME_2 = "Another Product";
+
     private static final BigDecimal TEST_PRICE_2 = new BigDecimal("49.99");
     private static final int TEST_STOCK_2 = 50;
     private static final String TEST_SELLER_AVATAR = "/avatars/seller.jpg";
+    private static final String UPDATED_PRODUCT_NAME = "Updated Product";
+    private static final String UPDATED_DESCRIPTION = "Updated Description";
+    private static final String BOOKS_CATEGORY = "Books";
+    private static final String SELLER_PRODUCT_2_NAME = "Seller Product 2";
+    private static final String ELECTRONICS_ITEM_NAME = "Electronics Item";
+    private static final String EMPTY_CATEGORY = "EmptyCategory";
 
     private ProductRequest productRequest;
 
@@ -157,7 +162,7 @@ class ProductServiceTest {
         // Arrange
         Product product2 = new Product();
         product2.setId(TEST_PRODUCT_ID);
-        product2.setName("Seller Product 2");
+        product2.setName(SELLER_PRODUCT_2_NAME);
         product2.setSellerEmail(TEST_SELLER_EMAIL);
 
         when(productRepository.findBySellerEmail(TEST_SELLER_EMAIL))
@@ -180,7 +185,7 @@ class ProductServiceTest {
         // Arrange
         Product product2 = new Product();
         product2.setId(TEST_PRODUCT_ID);
-        product2.setName("Electronics Item");
+        product2.setName(ELECTRONICS_ITEM_NAME);
         product2.setCategory(TEST_CATEGORY);
 
         when(productRepository.findByCategory(TEST_CATEGORY))
@@ -292,19 +297,19 @@ class ProductServiceTest {
     void testUpdateProductSuccess() {
         // Arrange
         ProductRequest updateRequest = new ProductRequest();
-        updateRequest.setName("Updated Product");
-        updateRequest.setDescription("Updated Description");
+        updateRequest.setName(UPDATED_PRODUCT_NAME);
+        updateRequest.setDescription(UPDATED_DESCRIPTION);
         updateRequest.setPrice(TEST_PRICE_2);
         updateRequest.setStock(TEST_STOCK_2);
-        updateRequest.setCategory("Books");
+        updateRequest.setCategory(BOOKS_CATEGORY);
 
         Product updatedProduct = new Product();
         updatedProduct.setId(TEST_PRODUCT_ID);
-        updatedProduct.setName("Updated Product");
-        updatedProduct.setDescription("Updated Description");
+        updatedProduct.setName(UPDATED_PRODUCT_NAME);
+        updatedProduct.setDescription(UPDATED_DESCRIPTION);
         updatedProduct.setPrice(TEST_PRICE_2);
         updatedProduct.setStock(TEST_STOCK_2);
-        updatedProduct.setCategory("Books");
+        updatedProduct.setCategory(BOOKS_CATEGORY);
         updatedProduct.setSellerEmail(TEST_SELLER_EMAIL);
 
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(testProduct));
@@ -315,11 +320,11 @@ class ProductServiceTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("Updated Product", response.getName());
-        assertEquals("Updated Description", response.getDescription());
+        assertEquals(UPDATED_PRODUCT_NAME, response.getName());
+        assertEquals(UPDATED_DESCRIPTION, response.getDescription());
         assertEquals(TEST_PRICE_2, response.getPrice());
         assertEquals(TEST_STOCK_2, response.getStock());
-        assertEquals("Books", response.getCategory());
+        assertEquals(BOOKS_CATEGORY, response.getCategory());
         
         verify(productRepository).findById(TEST_PRODUCT_ID);
         verify(productRepository).save(any(Product.class));
@@ -391,16 +396,16 @@ class ProductServiceTest {
     @DisplayName("Should return empty list when category has no products")
     void testGetProductsByCategoryEmptyList() {
         // Arrange
-        when(productRepository.findByCategory("EmptyCategory")).thenReturn(Arrays.asList());
+        when(productRepository.findByCategory(EMPTY_CATEGORY)).thenReturn(Arrays.asList());
 
         // Act
-        List<ProductResponse> products = productService.getProductsByCategory("EmptyCategory");
+        List<ProductResponse> products = productService.getProductsByCategory(EMPTY_CATEGORY);
 
         // Assert
         assertNotNull(products);
         assertTrue(products.isEmpty());
         
-        verify(productRepository).findByCategory("EmptyCategory");
+        verify(productRepository).findByCategory(EMPTY_CATEGORY);
     }
 
     @Test

@@ -74,6 +74,14 @@ class UserServiceTest {
     private static final String UPDATED_PHONE = "9876543210";
     private static final String TEST_AVATAR_URL = "/avatars/avatar.jpg";
     private static final String UPDATED_AVATAR_URL = "/uploads/avatars/new-avatar.jpg";
+    private static final String AVATAR_FILENAME = "avatar.jpg";
+    private static final String IMAGE_JPEG_TYPE = "image/jpeg";
+    private static final String PDF_FILENAME = "document.pdf";
+    private static final String PDF_CONTENT_TYPE = "application/pdf";
+    private static final String SELLER_EMAIL = "seller@example.com";
+    private static final String SELLER_ID = "seller123";
+    private static final String AVATAR_FILE_PARAM = "avatar";
+    private static final int MAX_FILE_SIZE = 3 * 1024 * 1024;
 
     @BeforeEach
     void setUp() {
@@ -353,9 +361,9 @@ class UserServiceTest {
     void testUploadAvatar_Success() throws IOException {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
-                "avatar",
-                "avatar.jpg",
-                "image/jpeg",
+                AVATAR_FILE_PARAM,
+                AVATAR_FILENAME,
+                IMAGE_JPEG_TYPE,
                 "avatar-content".getBytes()
         );
 
@@ -382,11 +390,11 @@ class UserServiceTest {
     @DisplayName("Should reject avatar file exceeding size limit")
     void testUploadAvatar_FileTooLarge() {
         // Arrange
-        byte[] largeContent = new byte[3 * 1024 * 1024]; // 3MB
+        byte[] largeContent = new byte[MAX_FILE_SIZE]; // 3MB
         MockMultipartFile largeFile = new MockMultipartFile(
-                "avatar",
+                AVATAR_FILE_PARAM,
                 "large-avatar.jpg",
-                "image/jpeg",
+                IMAGE_JPEG_TYPE,
                 largeContent
         );
 
@@ -406,9 +414,9 @@ class UserServiceTest {
     void testUploadAvatar_InvalidFileType() {
         // Arrange
         MockMultipartFile pdfFile = new MockMultipartFile(
-                "avatar",
-                "document.pdf",
-                "application/pdf",
+                AVATAR_FILE_PARAM,
+                PDF_FILENAME,
+                PDF_CONTENT_TYPE,
                 "pdf-content".getBytes()
         );
 
@@ -428,9 +436,9 @@ class UserServiceTest {
     void testUploadAvatar_UserNotFound() {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
-                "avatar",
-                "avatar.jpg",
-                "image/jpeg",
+                AVATAR_FILE_PARAM,
+                AVATAR_FILENAME,
+                IMAGE_JPEG_TYPE,
                 "avatar-content".getBytes()
         );
 
@@ -450,9 +458,9 @@ class UserServiceTest {
     void testUploadAvatarById_Success() throws IOException {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
-                "avatar",
-                "avatar.jpg",
-                "image/jpeg",
+                AVATAR_FILE_PARAM,
+                AVATAR_FILENAME,
+                IMAGE_JPEG_TYPE,
                 "avatar-content".getBytes()
         );
 
@@ -480,9 +488,9 @@ class UserServiceTest {
     void testUploadAvatarById_Unauthorized() {
         // Arrange
         MockMultipartFile avatarFile = new MockMultipartFile(
-                "avatar",
-                "avatar.jpg",
-                "image/jpeg",
+                AVATAR_FILE_PARAM,
+                AVATAR_FILENAME,
+                IMAGE_JPEG_TYPE,
                 "avatar-content".getBytes()
         );
 
@@ -502,9 +510,9 @@ class UserServiceTest {
     void testUploadAvatarById_InvalidFileType() {
         // Arrange
         MockMultipartFile pdfFile = new MockMultipartFile(
-                "avatar",
-                "document.pdf",
-                "application/pdf",
+                AVATAR_FILE_PARAM,
+                PDF_FILENAME,
+                PDF_CONTENT_TYPE,
                 "pdf-content".getBytes()
         );
 
@@ -524,7 +532,7 @@ class UserServiceTest {
     void testRegisterSeller_Success() {
         // Arrange
         RegisterRequest sellerRequest = new RegisterRequest();
-        sellerRequest.setEmail("seller@example.com");
+        sellerRequest.setEmail(SELLER_EMAIL);
         sellerRequest.setPassword(TEST_PASSWORD);
         sellerRequest.setFirstName(TEST_FIRST_NAME);
         sellerRequest.setLastName(TEST_LAST_NAME);
@@ -532,8 +540,8 @@ class UserServiceTest {
         sellerRequest.setRole(UserRole.SELLER);
 
         User sellerUser = new User();
-        sellerUser.setId("seller123");
-        sellerUser.setEmail("seller@example.com");
+        sellerUser.setId(SELLER_ID);
+        sellerUser.setEmail(SELLER_EMAIL);
         sellerUser.setRole(UserRole.SELLER);
 
         when(userRepository.existsByEmail(sellerRequest.getEmail())).thenReturn(false);
