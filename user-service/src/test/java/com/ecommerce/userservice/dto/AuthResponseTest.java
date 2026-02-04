@@ -30,7 +30,7 @@ class AuthResponseTest {
         AuthResponse response = new AuthResponse(TOKEN, USER);
         
         assertEquals(TOKEN, response.getToken());
-        assertEquals("Bearer", response.getType());
+        assertEquals(TYPE, response.getType());
         assertEquals(USER, response.getUser());
     }
 
