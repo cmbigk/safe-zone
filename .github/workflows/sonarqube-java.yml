@@ -109,14 +109,56 @@ jobs:
           if [ "${{ matrix.service }}" = "product-service" ]; then SONAR_TOKEN="${{ secrets.SONAR_TOKEN_PRODUCT_SERVICE }}"; fi
           if [ "${{ matrix.service }}" = "media-service" ]; then SONAR_TOKEN="${{ secrets.SONAR_TOKEN_MEDIA_SERVICE }}"; fi
           
-          echo "Waiting for Quality Gate result..."
-          sleep 10
+          echo "⏳ Waiting for Quality Gate result..."
+          sleep 15
           
           # Get analysis ID from report-task.txt
-          if [ -f "target/sonar/report-task.txt" ]; then
-            CE_TASK_URL=$(grep ceTaskUrl target/sonar/report-task.txt | cut -d'=' -f2-)
-            echo "Analysis submitted. Check SonarQube dashboard for results."
-            echo "Task URL: $CE_TASK_URL"
-          else
-            echo "⚠️ Warning: report-task.txt not found, but analysis was submitted"
+          if [ ! -f "target/sonar/report-task.txt" ]; then
+            echo "❌ Error: report-task.txt not found"
+            exit 1
           fi
+          
+          # Extract CE task URL and analysis ID
+          CE_TASK_URL=$(grep ceTaskUrl target/sonar/report-task.txt | cut -d'=' -f2-)
+          echo "📊 Analysis submitted: $CE_TASK_URL"
+          
+          # Wait for analysis to complete and check quality gate
+          MAX_RETRIES=30
+          RETRY_COUNT=0
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            # Get task status
+            TASK_STATUS=$(curl -s -u "$SONAR_TOKEN:" "$CE_TASK_URL" | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
+            
+            if [ "$TASK_STATUS" = "SUCCESS" ]; then
+              echo "✅ Analysis completed successfully"
+              
+              # Get analysis ID
+              ANALYSIS_ID=$(curl -s -u "$SONAR_TOKEN:" "$CE_TASK_URL" | grep -o '"analysisId":"[^"]*"' | cut -d'"' -f4)
+              
+              # Check quality gate status
+              QG_STATUS=$(curl -s -u "$SONAR_TOKEN:" "${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=${ANALYSIS_ID}" | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
+              
+              echo "🎯 Quality Gate Status: $QG_STATUS"
+              
+              if [ "$QG_STATUS" = "OK" ]; then
+                echo "✅ Quality Gate PASSED"
+                exit 0
+              else
+                echo "❌ Quality Gate FAILED"
+                echo "🔍 Check SonarQube dashboard: ${SONAR_HOST_URL}/dashboard?id=ecommerce-${{ matrix.service }}"
+                exit 1
+              fi
+            elif [ "$TASK_STATUS" = "FAILED" ] || [ "$TASK_STATUS" = "CANCELED" ]; then
+              echo "❌ Analysis task failed with status: $TASK_STATUS"
+              exit 1
+            fi
+            
+            echo "⏳ Analysis in progress... (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
+            sleep 5
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+          done
+          
+          echo "⚠️ Timeout waiting for analysis completion"
+          echo "📊 Check status manually: ${SONAR_HOST_URL}/dashboard?id=ecommerce-${{ matrix.service }}"
+          exit 1
