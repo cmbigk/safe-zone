@@ -1,38 +1,38 @@
 <?xml version="1.0"?>
-<testsuite name="Chrome Headless 144.0.0.0 (Mac OS 10.15.7)" package="Frontend Unit Tests" timestamp="2026-02-04T01:29:26" id="0" hostname="chan.myint" tests="30" errors="0" failures="0" time="0.148">
+<testsuite name="Chrome Headless 144.0.0.0 (Mac OS 10.15.7)" package="Frontend Unit Tests" timestamp="2026-02-04T01:50:06" id="0" hostname="chan.myint" tests="30" errors="0" failures="0" time="0.148">
   <properties>
     <property name="browser.fullName" value="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/144.0.0.0 Safari/537.36"/>
   </properties>
-  <testcase name="should retrieve a single product by ID" time="0.007" classname="ProductService - Real Tests"/>
-  <testcase name="should delete a product" time="0.001" classname="ProductService - Real Tests"/>
-  <testcase name="should include user headers when user is authenticated" time="0.001" classname="ProductService - Real Tests"/>
-  <testcase name="should retrieve all products" time="0.001" classname="ProductService - Real Tests"/>
-  <testcase name="should retrieve products by category" time="0.001" classname="ProductService - Real Tests"/>
-  <testcase name="should handle requests when user is not authenticated" time="0" classname="ProductService - Real Tests"/>
-  <testcase name="should be created" time="0.001" classname="ProductService - Real Tests"/>
-  <testcase name="should retrieve products by seller email" time="0" classname="ProductService - Real Tests"/>
-  <testcase name="should update an existing product" time="0.001" classname="ProductService - Real Tests"/>
-  <testcase name="should create a new product with seller headers" time="0.001" classname="ProductService - Real Tests"/>
+  <testcase name="should have authService injected" time="0.028" classname="AppComponent"/>
+  <testcase name="should create the app" time="0.001" classname="AppComponent"/>
+  <testcase name="should correctly identify buyer role (not seller)" time="0.001" classname="AuthService - Real Tests"/>
+  <testcase name="should correctly identify seller role" time="0.001" classname="AuthService - Real Tests"/>
+  <testcase name="should successfully login with valid credentials" time="0.002" classname="AuthService - Real Tests"/>
   <testcase name="should successfully register a new user" time="0.001" classname="AuthService - Real Tests"/>
-  <testcase name="should successfully login with valid credentials" time="0.001" classname="AuthService - Real Tests"/>
-  <testcase name="should return null when no token exists" time="0" classname="AuthService - Real Tests"/>
   <testcase name="should be created" time="0" classname="AuthService - Real Tests"/>
-  <testcase name="should clear authentication data on logout" time="0" classname="AuthService - Real Tests"/>
-  <testcase name="should return token from localStorage" time="0.001" classname="AuthService - Real Tests"/>
-  <testcase name="should correctly identify buyer role (not seller)" time="0" classname="AuthService - Real Tests"/>
   <testcase name="should load user from localStorage on service initialization" time="0.001" classname="AuthService - Real Tests"/>
-  <testcase name="should emit current user changes through observable" time="0.102" classname="AuthService - Real Tests"/>
   <testcase name="should correctly check authentication status" time="0" classname="AuthService - Real Tests"/>
-  <testcase name="should correctly identify seller role" time="0" classname="AuthService - Real Tests"/>
+  <testcase name="should return null when no token exists" time="0.001" classname="AuthService - Real Tests"/>
   <testcase name="should update current user in localStorage and observable" time="0" classname="AuthService - Real Tests"/>
+  <testcase name="should return token from localStorage" time="0" classname="AuthService - Real Tests"/>
+  <testcase name="should emit current user changes through observable" time="0.102" classname="AuthService - Real Tests"/>
+  <testcase name="should clear authentication data on logout" time="0.002" classname="AuthService - Real Tests"/>
+  <testcase name="should upload media file with productId" time="0.004" classname="MediaService"/>
+  <testcase name="should upload media file without productId" time="0" classname="MediaService"/>
+  <testcase name="should handle upload errors correctly" time="0" classname="MediaService"/>
+  <testcase name="should generate correct media URL" time="0.001" classname="MediaService"/>
   <testcase name="should generate media URL with special characters" time="0" classname="MediaService"/>
-  <testcase name="should handle upload errors correctly" time="0.001" classname="MediaService"/>
-  <testcase name="should upload media file without productId" time="0.001" classname="MediaService"/>
-  <testcase name="should generate correct media URL" time="0" classname="MediaService"/>
   <testcase name="should be created" time="0" classname="MediaService"/>
-  <testcase name="should upload media file with productId" time="0.001" classname="MediaService"/>
-  <testcase name="should create the app" time="0.023" classname="AppComponent"/>
-  <testcase name="should have authService injected" time="0.002" classname="AppComponent"/>
+  <testcase name="should retrieve all products" time="0.001" classname="ProductService - Real Tests"/>
+  <testcase name="should handle requests when user is not authenticated" time="0" classname="ProductService - Real Tests"/>
+  <testcase name="should retrieve a single product by ID" time="0.001" classname="ProductService - Real Tests"/>
+  <testcase name="should retrieve products by seller email" time="0" classname="ProductService - Real Tests"/>
+  <testcase name="should retrieve products by category" time="0" classname="ProductService - Real Tests"/>
+  <testcase name="should create a new product with seller headers" time="0" classname="ProductService - Real Tests"/>
+  <testcase name="should update an existing product" time="0" classname="ProductService - Real Tests"/>
+  <testcase name="should delete a product" time="0.001" classname="ProductService - Real Tests"/>
+  <testcase name="should include user headers when user is authenticated" time="0" classname="ProductService - Real Tests"/>
+  <testcase name="should be created" time="0" classname="ProductService - Real Tests"/>
   <system-out>
     <![CDATA[
 ]]>
