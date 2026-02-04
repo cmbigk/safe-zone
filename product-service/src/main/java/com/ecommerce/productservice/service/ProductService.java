@@ -96,7 +96,7 @@ public class ProductService {
         
         return mapToProductResponse(updatedProduct);
     }
-    /*
+    
     public void deleteProduct(String productId, String sellerEmail) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE + productId));
@@ -121,7 +121,7 @@ public class ProductService {
         
         return mapToProductResponse(product);
     }
-    */
+    
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream()
                 .map(this::mapToProductResponse)
