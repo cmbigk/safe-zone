@@ -3,6 +3,8 @@ package com.ecommerce.gateway;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @SpringBootTest
 class ApiGatewayApplicationTest {
 
@@ -16,17 +18,6 @@ class ApiGatewayApplicationTest {
         // Test that main method can be invoked without errors
         String[] args = {};
         // Just verify the class and main method exist
-        assertDoesNotThrow(() -> {
-            ApiGatewayApplication.main(args);
-        });
-    }
-
-    private void assertDoesNotThrow(Runnable runnable) {
-        try {
-            // Don't actually run Spring app in test, just verify method exists
-            ApiGatewayApplication.class.getMethod("main", String[].class);
-        } catch (Exception e) {
-            throw new AssertionError("Main method should exist", e);
-        }
+        assertDoesNotThrow(() -> ApiGatewayApplication.main(args));
     }
 }

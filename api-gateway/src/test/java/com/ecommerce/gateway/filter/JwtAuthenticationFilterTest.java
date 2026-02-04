@@ -8,7 +8,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -28,12 +28,12 @@ class JwtAuthenticationFilterTest {
 
     private JwtAuthenticationFilter filter;
     private GatewayFilterChain chain;
-    private String jwtSecret = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+    private static final String JWT_SECRET = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
 
     @BeforeEach
     void setUp() {
         filter = new JwtAuthenticationFilter();
-        ReflectionTestUtils.setField(filter, "jwtSecret", jwtSecret);
+        ReflectionTestUtils.setField(filter, "jwtSecret", JWT_SECRET);
         chain = mock(GatewayFilterChain.class);
         when(chain.filter(any())).thenReturn(Mono.empty());
     }
@@ -83,10 +83,12 @@ class JwtAuthenticationFilterTest {
         verify(chain).filter(exchange);
     }
 
+    String apiProtected= "http://localhost/api/protected";
+
     @Test
     void testMissingAuthorizationHeader() {
         MockServerHttpRequest request = MockServerHttpRequest
-                .post("http://localhost/api/protected")
+                .post(apiProtected)
                 .build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
 
@@ -100,7 +102,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void testInvalidAuthorizationHeaderFormat() {
         MockServerHttpRequest request = MockServerHttpRequest
-                .post("http://localhost/api/protected")
+                .post(apiProtected)
                 .header(HttpHeaders.AUTHORIZATION, "Invalid token")
                 .build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
@@ -117,7 +119,7 @@ class JwtAuthenticationFilterTest {
         String token = generateToken("user@example.com", "CLIENT");
         
         MockServerHttpRequest request = MockServerHttpRequest
-                .post("http://localhost/api/protected")
+                .post(apiProtected)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
@@ -133,7 +135,7 @@ class JwtAuthenticationFilterTest {
         String expiredToken = generateExpiredToken("user@example.com", "CLIENT");
         
         MockServerHttpRequest request = MockServerHttpRequest
-                .post("http://localhost/api/protected")
+                .post(apiProtected)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + expiredToken)
                 .build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
@@ -148,7 +150,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void testInvalidToken() {
         MockServerHttpRequest request = MockServerHttpRequest
-                .post("http://localhost/api/protected")
+                .post(apiProtected)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer invalid.token.here")
                 .build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
@@ -161,7 +163,7 @@ class JwtAuthenticationFilterTest {
     }
 
     private String generateToken(String email, String role) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .subject(email)
                 .claim("role", role)
@@ -172,7 +174,7 @@ class JwtAuthenticationFilterTest {
     }
 
     private String generateExpiredToken(String email, String role) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .subject(email)
                 .claim("role", role)
