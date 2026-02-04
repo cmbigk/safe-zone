@@ -100,23 +100,10 @@ jobs:
           path: ${{ matrix.service }}/target/site/jacoco/
       
       - name: ⏳ Wait for Quality Gate
-        working-directory: ./${{ matrix.service }}
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        with:
+          scanMetadataReportFile: ${{ matrix.service }}/target/sonar/report-task.txt
         env:
+          SONAR_TOKEN: ${{ matrix.service == 'api-gateway' && secrets.SONAR_TOKEN_API_GATEWAY || matrix.service == 'user-service' && secrets.SONAR_TOKEN_USER_SERVICE || matrix.service == 'product-service' && secrets.SONAR_TOKEN_PRODUCT_SERVICE || secrets.SONAR_TOKEN_MEDIA_SERVICE }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          SONAR_TOKEN="${{ secrets.SONAR_TOKEN_API_GATEWAY }}"
-          if [ "${{ matrix.service }}" = "user-service" ]; then SONAR_TOKEN="${{ secrets.SONAR_TOKEN_USER_SERVICE }}"; fi
-          if [ "${{ matrix.service }}" = "product-service" ]; then SONAR_TOKEN="${{ secrets.SONAR_TOKEN_PRODUCT_SERVICE }}"; fi
-          if [ "${{ matrix.service }}" = "media-service" ]; then SONAR_TOKEN="${{ secrets.SONAR_TOKEN_MEDIA_SERVICE }}"; fi
-          
-          echo "Waiting for Quality Gate result..."
-          sleep 10
-          
-          # Get analysis ID from report-task.txt
-          if [ -f "target/sonar/report-task.txt" ]; then
-            CE_TASK_URL=$(grep ceTaskUrl target/sonar/report-task.txt | cut -d'=' -f2-)
-            echo "Analysis submitted. Check SonarQube dashboard for results."
-            echo "Task URL: $CE_TASK_URL"
-          else
-            echo "⚠️ Warning: report-task.txt not found, but analysis was submitted"
-          fi
