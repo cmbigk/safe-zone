@@ -1,4 +1,4 @@
-name: SonarQube Analysis - Java Services
+name: SonarQube Analysis - Backend Services
 
 on:
   push:
