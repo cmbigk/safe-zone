@@ -1,6 +1,6 @@
 projectKey=ecommerce-frontend
-serverUrl=http://localhost:9000
+serverUrl=https://kolton-proptosed-unludicrously.ngrok-free.dev
 serverVersion=26.1.0.118079
-dashboardUrl=http://localhost:9000/dashboard?id=ecommerce-frontend
-ceTaskId=6290ea9a-98e4-4ea0-b6ab-42d68d6676c9
-ceTaskUrl=http://localhost:9000/api/ce/task?id=6290ea9a-98e4-4ea0-b6ab-42d68d6676c9
+dashboardUrl=https://kolton-proptosed-unludicrously.ngrok-free.dev/dashboard?id=ecommerce-frontend
+ceTaskId=cfd4b2ec-5680-43d8-82f4-9847bef136c8
+ceTaskUrl=https://kolton-proptosed-unludicrously.ngrok-free.dev/api/ce/task?id=cfd4b2ec-5680-43d8-82f4-9847bef136c8
