@@ -107,10 +107,8 @@ on:
 - ✅ Automated test execution before analysis
 
 **Analysis Commands:**
-```bash
-# Backend Services
-mvn clean verify sonar:sonar -Dsonar.projectKey=ecommerce-{service}
 
+```bash
 # Frontend
 npm run test:coverage
 sonar-scanner (via GitHub Actions)

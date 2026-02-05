@@ -43,8 +43,7 @@ public class UserService {
         this.authenticationManager = authenticationManager;
         this.kafkaTemplate = kafkaTemplate;
     }
-    
-    private static final String UPLOAD_DIR = "uploads/avatars/";
+
     
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
