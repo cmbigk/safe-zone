@@ -22,7 +22,7 @@ public class ProductService {
     
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private static final String PRODUCT_EVENTS_TOPIC = "product-events";
-    private static final String PRODUCT_NOT_FOUND_MESSAGE = "Product not found with id: ";
+   
     
     private final ProductRepository productRepository;
  
