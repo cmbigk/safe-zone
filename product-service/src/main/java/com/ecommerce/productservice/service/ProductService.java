@@ -21,7 +21,7 @@ import java.util.List;
 public class ProductService {
     
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
-    private static final String PRODUCT_EVENTS_TOPIC = "product-events";
+
    
     
     private final ProductRepository productRepository;
