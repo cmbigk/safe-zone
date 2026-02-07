@@ -83,7 +83,9 @@ jobs:
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.java.binaries=target/classes \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.qualitygate.wait=true \
+            -Dsonar.qualitygate.timeout=300
       
       - name: 📋 Upload test results
         if: always()
@@ -99,11 +101,5 @@ jobs:
           name: coverage-${{ matrix.service }}
           path: ${{ matrix.service }}/target/site/jacoco/
       
-      - name: ⏳ Wait for Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        with:
-          scanMetadataReportFile: ${{ matrix.service }}/target/sonar/report-task.txt
-        env:
-          SONAR_TOKEN: ${{ matrix.service == 'api-gateway' && secrets.SONAR_TOKEN_API_GATEWAY || matrix.service == 'user-service' && secrets.SONAR_TOKEN_USER_SERVICE || matrix.service == 'product-service' && secrets.SONAR_TOKEN_PRODUCT_SERVICE || secrets.SONAR_TOKEN_MEDIA_SERVICE }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # Quality Gate check is now handled by -Dsonar.qualitygate.wait=true in the scan step
+      # This makes the build fail immediately if quality gate fails

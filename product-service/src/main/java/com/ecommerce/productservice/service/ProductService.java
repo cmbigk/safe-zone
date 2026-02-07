@@ -1,20 +1,20 @@
 package com.ecommerce.productservice.service;
 
-import com.ecommerce.productservice.dto.ProductRequest;
-import com.ecommerce.productservice.dto.ProductResponse;
-import com.ecommerce.productservice.exception.ResourceNotFoundException;
-import com.ecommerce.productservice.exception.UnauthorizedException;
-import com.ecommerce.productservice.model.Product;
-import com.ecommerce.productservice.repository.ProductRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-
-import java.time.LocalDateTime;
-import java.util.List;
+import com.ecommerce.productservice.dto.ProductRequest;
+import com.ecommerce.productservice.dto.ProductResponse;
+import com.ecommerce.productservice.exception.ResourceNotFoundException;
+import com.ecommerce.productservice.exception.UnauthorizedException;
+import com.ecommerce.productservice.model.Product;
+import com.ecommerce.productservice.repository.ProductRepository;
 
 
 @Service
@@ -189,4 +189,3 @@ public class ProductService {
         );
     }
 }
-// Test change

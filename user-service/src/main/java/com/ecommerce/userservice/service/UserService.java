@@ -235,3 +235,4 @@ public class UserService {
         );
     }
 }
+// Quality Gate update: Sat Feb  7 19:50:34 EET 2026
