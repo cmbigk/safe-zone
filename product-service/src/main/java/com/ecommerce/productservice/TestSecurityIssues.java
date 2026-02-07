@@ -1,16 +1,18 @@
-/*
+
 package com.ecommerce.productservice;
 
 import java.sql.*;
 import java.io.File;
 
 
+
+public class TestSecurityIssues {
+    /*
+    
  * THIS FILE CONTAINS INTENTIONAL SECURITY VULNERABILITIES FOR TESTING
  * Purpose: Demonstrate that Quality Gate fails when code quality/security issues are detected
  * DO NOT USE IN PRODUCTION
-
-public class TestSecurityIssues {
-    
+ 
     // CRITICAL: SQL Injection Vulnerability
     public ResultSet vulnerableQuery(String userId, String productId) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce");
@@ -99,5 +101,5 @@ public class TestSecurityIssues {
         // Using weak/outdated algorithm
         return password.hashCode() + "";
     }
-}
 */
+}
