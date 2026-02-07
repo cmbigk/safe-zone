@@ -1,13 +1,14 @@
+/*
 package com.ecommerce.productservice;
 
 import java.sql.*;
 import java.io.File;
 
-/**
+
  * THIS FILE CONTAINS INTENTIONAL SECURITY VULNERABILITIES FOR TESTING
  * Purpose: Demonstrate that Quality Gate fails when code quality/security issues are detected
  * DO NOT USE IN PRODUCTION
- */
+
 public class TestSecurityIssues {
     
     // CRITICAL: SQL Injection Vulnerability
@@ -99,3 +100,4 @@ public class TestSecurityIssues {
         return password.hashCode() + "";
     }
 }
+*/
