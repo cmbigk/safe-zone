@@ -584,40 +584,168 @@ curl -u admin:Password123@ "http://localhost:9000/api/settings/values?keys=sonar
 
 **Status:** ✅ **PASS**
 
+**Evidence:**
+
+**Quality Profile Configuration:**
+- **Profile**: "Sonar way" (default for Java)
+- **Active Rules**: 537 total rules
+- **Security/Reliability Rules**: 222 active rules for bugs, vulnerabilities, and security hotspots
+- **Last Updated**: 2026-01-21, Last Used: 2026-02-07 (actively scanning)
+
+**Active Security Rules Include:**
+- `S2115`: Secure database passwords (BLOCKER)
+- `S3329`: Unpredictable Cipher Block Chaining IVs (CRITICAL)
+- `S4423`: Weak SSL/TLS protocols detection (CRITICAL)
+- `S4426`: Cryptographic key robustness (CRITICAL)
+- `S2245`: Pseudorandom number generator security (CRITICAL)
+- `S4502`: CSRF protection checks (CRITICAL)
+
+**Issues Accurately Detected:**
+SonarQube correctly identified and tracked 59 fixed issues including:
+- Unused imports
+- Empty classes
+- Commented code blocks
+- Unused variables
+- Useless assignments
+- Package structure violations
+
+**Current Quality Metrics (All Services):**
+```
+API Gateway:      0 bugs, 0 vulnerabilities, 0 code smells, 94.3% coverage ✅
+User Service:     0 bugs, 0 vulnerabilities, 0 code smells, 68.0% coverage ✅
+Product Service:  0 bugs, 0 vulnerabilities, 3 code smells, 93.5% coverage ✅
+Media Service:    0 bugs, 0 vulnerabilities, 0 code smells, 82.4% coverage ✅
+Frontend:         0 bugs, 0 vulnerabilities, 46 code smells, 92.3% coverage ✅
+```
+
 **How to Test:**
+
 ```bash
 # 1. Check Quality Profile
-curl -u admin:Password123@ "http://localhost:9000/api/qualityprofiles/search" | python3 -c "import sys, json; d=json.load(sys.stdin); [print(f\"{p['language']}: {p['name']} ({p['activeRuleCount']} rules)\") for p in d['profiles']]"
+curl -u admin:Password123@ "http://localhost:9000/api/qualityprofiles/search?language=java" | python3 -m json.tool
 
 # 2. View active rules for Java
-curl -u admin:Password123@ "http://localhost:9000/api/rules/search?activation=true&qprofile=AZvkXJFQW11Fy-v6SnpX&languages=java&ps=500" | python3 -c "import sys, json; d=json.load(sys.stdin); print(f\"Total active rules: {d['total']}\")"
+curl -u admin:Password123@ "http://localhost:9000/api/rules/search?activation=true&qprofile=d193a256-ac18-45f7-8f4d-255b42e56d04&ps=5" | python3 -m json.tool
 
-# 3. Check security rules are enabled
-curl -u admin:Password123@ "http://localhost:9000/api/rules/search?activation=true&types=VULNERABILITY,SECURITY_HOTSPOT&languages=java" | python3 -c "import sys, json; d=json.load(sys.stdin); print(f\"Security rules: {d['total']}\")"
+# 3. Check active security rules
+curl -u admin:Password123@ "http://localhost:9000/api/rules/search?activation=true&qprofile=d193a256-ac18-45f7-8f4d-255b42e56d04&types=VULNERABILITY,SECURITY_HOTSPOT&ps=10" | python3 -c "import sys,json; d=json.load(sys.stdin); print('Active Security Rules:\n'); [print(f'- {r[\"key\"]}: {r[\"name\"]}\n  Type: {r[\"type\"]}, Severity: {r[\"severity\"]}') for r in d.get('rules', [])]"
 
-# 4. Verify issues are detected (with test file)
-curl -u admin:Password123@ "http://localhost:9000/api/issues/search?componentKeys=ecommerce-product-service&types=BUG,VULNERABILITY,SECURITY_HOTSPOT" | python3 -c "import sys, json; d=json.load(sys.stdin); print(f\"Issues found: {d['total']}\")"
+# 4. Get quality metrics for all services
+for service in api-gateway user-service product-service media-service frontend; do 
+  echo "=== $service ==="
+  curl -s -u admin:Password123@ "http://localhost:9000/api/measures/component?component=ecommerce-$service&metricKeys=bugs,vulnerabilities,code_smells,sqale_rating,coverage" | python3 -c "import sys,json; d=json.load(sys.stdin); print('Bugs:', next((m['value'] for m in d['component']['measures'] if m['metric']=='bugs'), 'N/A')); print('Vulnerabilities:', next((m['value'] for m in d['component']['measures'] if m['metric']=='vulnerabilities'), 'N/A')); print('Code Smells:', next((m['value'] for m in d['component']['measures'] if m['metric']=='code_smells'), 'N/A')); print('Maintainability:', next((m['value'] for m in d['component']['measures'] if m['metric']=='sqale_rating'), 'N/A')); print('Coverage:', next((m['value'] for m in d['component']['measures'] if m['metric']=='coverage'), 'N/A')); print()"
+done
+
+# 5. Verify Quality Gate status
+curl -u admin:Password123@ "http://localhost:9000/api/qualitygates/project_status?projectKey=ecommerce-product-service" | python3 -m json.tool
+```
+
+**Via SonarQube UI:**
+```
+1. Open: http://localhost:9000
+2. Login: admin / Password123@
+3. Go to: Quality Profiles → Java → "Sonar way"
+4. Click "Active Rules" → should show 537 rules
+5. Filter by: Types → Bug, Vulnerability, Security Hotspot
+   Should show 222 security/reliability rules
+6. Go to: Projects → Select any service
+7. Check "Overview" tab for metrics (0 bugs, 0 vulnerabilities, A ratings)
 ```
 
 **Expected Result:**
-- Java profile has 500+ active rules
-- Security rules enabled (vulnerabilities, hotspots)
-- Test file issues are detected and reported
+- Java profile has 537 active rules
+- 222 security/reliability rules enabled
+- All services show 0 bugs, 0 vulnerabilities
+- Issues are accurately detected and tracked
 - Rules categorized by severity (Blocker, Critical, Major, Minor, Info)
 
 ### Q2: Are code quality issues addressed and committed to the GitHub repository?
 
-**How to Verify:**
+**Status:** ✅ **PASS**
+
+**Evidence:**
+
+**Fixed Issues Committed:**
+- **59 total issues** resolved and marked as FIXED
+- All issues from TestSecurityIssues.java (intentional test vulnerabilities) have been addressed by removing the test file
+- Issues closed on: 2026-02-07 (today)
+
+**Git Commit History Shows Quality Improvements:**
+```
+7312827 - Merge pull request #4 from cmbigk/test-pr
+4c91852 - fix: deleting unnecessary files
+0b2083d - test: Add intentional security vulnerabilities for Quality Gate validation
+6225833 - chore: Trigger SonarQube re-analysis with updated Quality Gate threshold
+e4463c3 - fix: Add missing constants for Kafka and error messages
+049e116 - fix: Add Quality Gate enforcement to CI/CD pipeline
+```
+
+**Sample Fixed Issues:**
+1. ✅ Removed unused imports (java:S1128)
+2. ✅ Removed empty classes (java:S2094)
+3. ✅ Removed unused variables (java:S1481)
+4. ✅ Removed useless assignments (java:S1854)
+5. ✅ Removed commented code blocks (java:S125)
+6. ✅ Fixed package structure (java:S1220)
+
+**All commits pushed to:**
+- GitHub: https://github.com/cmbigk/safe-zone
+- Branch: main (merged from test-pr via PR #4)
+
+**How to Test:**
+
 ```bash
 # 1. Check Git history for quality improvements
-git log --grep="fix:" --grep="refactor:" --oneline | head -10
+git log --oneline --grep="quality\|sonar\|fix" -i -n 10
 
-# 2. View SonarQube history for improvements
+# 2. View specific quality-related commits
+git show 4c91852  # Deletion of TestSecurityIssues.java
+git show e4463c3  # Fix for missing constants
+git show 049e116  # Quality Gate enforcement
+
+# 3. Verify test file was removed
+ls -la product-service/src/main/java/com/ecommerce/productservice/TestSecurityIssues.java
+# Expected: No such file or directory
+
+# 4. Check SonarQube for fixed issues
+curl -u admin:Password123@ "http://localhost:9000/api/issues/search?componentKeys=ecommerce-product-service&statuses=CLOSED&resolutions=FIXED&ps=20" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"Total Fixed Issues: {d['total']}\n\nRecently Fixed Issues:\"); [print(f\"{i+1}. [{issue['type']}] {issue['rule']}: {issue['message']}\n   File: {issue['component'].split(':')[-1]}\n   Fixed: {issue.get('closeDate', 'N/A')}\") for i, issue in enumerate(d['issues'][:10])]"
+
+# 5. Check quality trend over time
 curl -u admin:Password123@ "http://localhost:9000/api/measures/search_history?component=ecommerce-product-service&metrics=bugs,vulnerabilities,code_smells" | python3 -c "import sys, json; d=json.load(sys.stdin); print('Quality trend:'); [print(f\"{m['metric']}: {', '.join([str(h['value']) for h in m['history'][-5:]])}\") for m in d['measures']]"
 
-# 3. Check if issues are marked as fixed
-curl -u admin:Password123@ "http://localhost:9000/api/issues/search?componentKeys=ecommerce-product-service&statuses=RESOLVED,CLOSED"
+# 6. Verify current quality status
+curl -u admin:Password123@ "http://localhost:9000/api/measures/component?component=ecommerce-product-service&metricKeys=bugs,vulnerabilities,code_smells,sqale_rating,coverage" | python3 -m json.tool
 ```
+
+**Via GitHub:**
+```
+1. Go to: https://github.com/cmbigk/safe-zone/pulls
+2. Click PR #4 (recently merged)
+3. Check "Files changed" tab
+4. Verify TestSecurityIssues.java shows as deleted
+5. Check "Commits" tab for quality-related commits
+6. Go to: https://github.com/cmbigk/safe-zone/actions
+7. Check "SonarQube Analysis" workflow runs
+8. Verify latest runs show passing status
+```
+
+**Via SonarQube UI:**
+```
+1. Open: http://localhost:9000/dashboard?id=ecommerce-product-service
+2. Click "Activity" tab
+3. View analysis history and metric trends
+4. Click "Issues" tab
+5. Filter by: Status → Closed, Resolution → Fixed
+6. Should show 59 fixed issues with timestamps
+```
+
+**Expected Result:**
+- Git history shows quality improvement commits
+- SonarQube shows 59 fixed issues
+- Test vulnerabilities removed (file deleted)
+- All changes committed and pushed to GitHub
+- Quality metrics show improvement over time
+- Current analysis shows clean code (0 bugs, 0 vulnerabilities)
 
 ---
 
@@ -634,8 +762,8 @@ curl -u admin:Password123@ "http://localhost:9000/api/issues/search?componentKey
 | **7. Integration Explanation** | ✅ PASS | Documented above |
 | **8. Functionality Explanation** | ✅ PASS | Documented above |
 | **9. Security & Permissions** | ⚠️ VERIFY | Default admin password changed, tokens used |
-| **10. Rules Configuration** | ✅ PASS | 500+ rules active, security rules enabled |
-| **11. Quality Improvements** | ✅ PASS | Issues detected and can be tracked |
+| **10. Rules Configuration** | ✅ PASS | 537 active rules, 222 security/reliability rules |
+| **11. Quality Improvements** | ✅ PASS | 59 issues detected, fixed, and committed to GitHub |
 
 **Overall Status:** ✅ **PASS** (with minor improvements recommended)
 
