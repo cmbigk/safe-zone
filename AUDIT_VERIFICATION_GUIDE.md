@@ -225,6 +225,9 @@ grep -A 5 "pull_request:" .github/workflows/sonarqube-java.yml
 #   ✓ Require status checks to pass (SonarQube Analysis)
 #   ✓ Require branches to be up to date
 
+git commit --allow-empty -m "Trigger workflows for status checks"
+git push origin test-pr
+
 # 3. Test PR workflow
 git checkout -b test/code-review
 echo "// Test change" >> product-service/src/main/java/com/ecommerce/productservice/service/ProductService.java
