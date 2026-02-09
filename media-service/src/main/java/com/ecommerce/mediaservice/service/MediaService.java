@@ -158,5 +158,3 @@ public class MediaService {
         );
     }
 }
-// Quality Gate update: Sat Feb  7 19:50:34 EET 2026
-// testing 
