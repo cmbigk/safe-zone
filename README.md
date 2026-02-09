@@ -109,7 +109,6 @@ Then open http://localhost:8090
 **Required for Local Development:**
 - Java 21 (OpenJDK or Eclipse Temurin)
 - Maven 3.9+ 
-- Node.js 18+ LTS
 - Angular CLI (`npm install -g @angular/cli`)
 
 **Verify Installations:**
