@@ -1,544 +1,340 @@
-# E-Commerce Microservices Platform with CI/CD
+# Safe Zone - Microservices Platform with SonarQube & Jenkins CI/CD
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
+[![SonarQube](https://img.shields.io/badge/SonarQube-Code%20Quality-4E9BCD)]()
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red)]()
 [![Docker](https://img.shields.io/badge/Docker-Enabled-blue)]()
 
-A comprehensive e-commerce platform built with **Java 21**, Spring Boot microservices, MongoDB, Kafka, and Angular. **Now with complete Jenkins CI/CD pipeline!**
+A comprehensive **DevOps demonstration project** featuring a microservices e-commerce platform with complete **SonarQube code quality analysis** and **Jenkins CI/CD pipeline** integration. Built with **Java 21**, Spring Boot, MongoDB, Kafka, and Angular.
 
-## 🎯 Project Status
+## 🎯 Project Overview
 
-✅ **Backend Services Completed** (Java 21 + Spring Boot 3.2.0)  
-✅ **Docker Integration** (docker-compose with all services)  
-✅ **Test Reporting** (JUnit XML + JaCoCo coverage with 50% threshold)  
-✅ **Jenkins CI/CD Pipeline** (automated testing, deployment, rollback)  
-✅ **GitHub Integration** (auto-trigger builds on commit)  
-✅ **Frontend Completed** (Angular 17 with implementation)  
+This project demonstrates professional DevOps practices with:
+- ✅ **SonarQube Integration** - Automated code quality analysis and technical debt tracking
+- ✅ **Jenkins CI/CD Pipeline** - Continuous integration with quality gates
+- ✅ **Code Coverage Analysis** - JaCoCo with 50% minimum threshold
+- ✅ **Docker Containerization** - Complete containerized deployment
+- ✅ **Microservices Architecture** - Java 21 + Spring Boot 3.2.0
+- ✅ **Modern Frontend** - Angular 17 with Karma/Jasmine testing  
 
-## 🚀 CI/CD Pipeline
+## 🚀 Quick Start
 
-This project includes a complete Jenkins CI/CD setup with:
-- ✅ Automated testing (JUnit + Jasmine/Karma)
-- ✅ Blue-green deployment with rollback
-- ✅ Email & Slack notifications
-- ✅ GitHub webhook integration (instant trigger on push)
-- ✅ Parameterized builds (dev/staging/production)
+### 1. Start SonarQube (Code Quality Analysis)
+```bash
+cd deployment
+./start-sonarqube.sh
+```
+- Access SonarQube at: http://localhost:9000
+- Default credentials: `admin / admin`
+- Wait 1-2 minutes for SonarQube to fully initialize
 
-**Quick Start CI/CD:**
+### 2. Start Jenkins (CI/CD Pipeline)
 ```bash
 cd deployment
 ./start-jenkins.sh
 ```
-Then open http://localhost:8090
-
-**📚 Documentation:**
-- **Test Reports:** See [TEST_REPORTING.md](TEST_REPORTING.md) for comprehensive testing documentation
-- **Pipeline Evaluation:** See [JENKINS_PIPELINE_EVALUATION.md](JENKINS_PIPELINE_EVALUATION.md)
-
-## 🏗️ Architecture Overview
-
-### Microservices (All Java 21)
-1. **User Service** (Port 8081) - Authentication, registration, profile management, avatar upload
-2. **Product Service** (Port 8082) - Product CRUD with seller-only authorization
-3. **Media Service** (Port 8083) - Image upload with 2MB limit and type validation
-4. **API Gateway** (Port 8080) - Centralized routing and request handling
-
-### Technologies
-- **Backend**: Java 21, Spring Boot 3.2.0, MongoDB, Kafka, JWT, Apache Tika
-- **Frontend**: Angular 17+, Karma/Jasmine testing
-- **Infrastructure**: Docker, Docker Compose, Jenkins CI/CD
-- **Testing**: JUnit 5, Maven Surefire/Failsafe, JaCoCo (50% coverage threshold)
-- **Security**: BCrypt, JWT, Role-based access control
-
-## ✨ Features
-
-### User Management (user-service)
-- ✅ User registration as CLIENT or SELLER
-- ✅ JWT-based authentication
-- ✅ Profile management (get/update with authorization)
-- ✅ Avatar upload (2MB limit, image validation)
-- ✅ User can only update own profile (JWT)
-
-### Product Management (product-service)
-- ✅ CRUD operations (sellers only)
-- ✅ Seller ownership validation (only owner can update/delete)
-- ✅ Product-image associations
-- ✅ Query by seller, category, or all products
-- ✅ MongoDB persistence
-- ✅ Kafka event configuration
-
-### Media Management (media-service)
-- ✅ Image upload with strict validation
-- ✅ 2MB file size limit enforced
-- ✅ File type detection using Apache Tika (not just content-type)
-- ✅ Only images allowed (JPEG, PNG, GIF, WebP)
-- ✅ MongoDB metadata storage
-- ✅ File serving endpoint
-- ✅ Product association
-
-### Security & Validation
-- ✅ BCrypt password hashing
-- ✅ JWT token authentication
-- ✅ Role-based authorization (SELLER vs CLIENT)
-- ✅ Ownership validation (users can only modify their own resources)
-- ✅ Sensitive data protection (passwords never in API responses)
-- ✅ Comprehensive input validation (Bean Validation)
-- ✅ Global exception handling with meaningful error messages
-- ✅ File upload constraints enforced
-
-### CI/CD & Test Reporting
-- ✅ Jenkins automated pipelines for all services
-- ✅ JUnit XML test reports with detailed execution data
-- ✅ JaCoCo code coverage (HTML + XML reports)
-- ✅ 50% minimum coverage threshold enforced
-- ✅ Test results archived and accessible in Jenkins UI
-- ✅ Integration test support (Maven Failsafe)
-- ✅ Frontend coverage reports (Karma + Istanbul)
-- ✅ Historical trend tracking across builds
-
-**📊 View Reports:** All test and coverage reports available at `${BUILD_URL}testReport/` and `${BUILD_URL}jacoco/`
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-**Required for Docker (Recommended):**
-- Docker Desktop (latest version)
-- Docker Compose (included with Docker Desktop)
-
-**Required for Local Development:**
-- Java 21 (OpenJDK or Eclipse Temurin)
-- Maven 3.9+ 
-- Angular CLI (`npm install -g @angular/cli`)
-
-**Verify Installations:**
-```powershell
-# Check Docker
-docker --version          # Docker version 24.0+
-docker-compose --version  # Docker Compose version 2.0+
-
-# Check Java & Maven
-java -version             # openjdk version "21.x.x"
-mvn -version              # Apache Maven 3.9+
-
-# Check Node & Angular
-node --version            # v18.x or v20.x
-npm --version             # 9.x or 10.x
-ng version                # Angular CLI 17.x or 18.x
-```
-
----
-
-## 🏃 Running the Application
-
-### **Option 1: Docker Compose (Recommended for Full Stack)**
-
-Complete microservices stack with MongoDB, Kafka, and all services:
-
-```powershell
-# 1. Clone the repository
-git clone https://github.com/cmbigk/buy-01.git
-cd buy-01
-
-# 2. Start all services (backend + databases)
-docker-compose up --build -d
-
-# 3. Verify all containers are running
-docker ps
-
-# Expected output: 7 containers running
-# - user-service (port 8081)
-# - product-service (port 8082)
-# - media-service (port 8083)
-# - mongodb-user (port 27017)
-# - mongodb-product (port 27018)
-# - mongodb-media (port 27019)
-# - zookeeper (port 2181)
-
-# 4. Check service health
-docker logs user-service --tail 20      # Should show "Started UserServiceApplication"
-docker logs product-service --tail 20   # Should show "Started ProductServiceApplication"
-docker logs media-service --tail 20     # Should show "Started MediaServiceApplication"
-
-# 5. Start Angular frontend (separate terminal)
-cd frontend
-npm install                # Only needed first time
-ng serve
-
-# 6. Access the application
-# Frontend: http://localhost:4200
-# User API: http://localhost:8081
-# Product API: http://localhost:8082
-# Media API: http://localhost:8083
-```
-
-**Docker Management Commands:**
-```powershell
-# Stop all services
-docker-compose down
-
-# Stop and remove all data (clean slate)
-docker-compose down -v
-
-# Restart a single service
-docker-compose restart user-service
-
-# View logs
-docker-compose logs -f              # All services
-docker-compose logs -f user-service # Specific service
-
-# Rebuild after code changes
-docker-compose up --build -d
-```
-
----
-
-### **Option 2: Local Development (Maven + Angular)**
-
-Run services individually without Docker (requires manual MongoDB setup):
-
-#### **Backend Services (Each in Separate Terminal)**
-
-**Terminal 1 - User Service:**
-```powershell
-cd user-service
-
-# Build the project
-mvn clean install -DskipTests
-
-# Run the service
-mvn spring-boot:run
-
-# OR run the JAR directly
-java -jar target/user-service-0.0.1-SNAPSHOT.jar
-
-# Verify: http://localhost:8081/actuator/health
-```
-
-**Terminal 2 - Product Service:**
-```powershell
-cd product-service
-
-# Build and run
-mvn clean install -DskipTests
-mvn spring-boot:run
-
-# Verify: http://localhost:8082/actuator/health
-```
-
-**Terminal 3 - Media Service:**
-```powershell
-cd media-service
-
-# Build and run
-mvn clean install -DskipTests
-mvn spring-boot:run
-
-# Verify: http://localhost:8083/actuator/health
-```
-
-#### **Frontend (Angular) - Terminal 4:**
-```powershell
-cd frontend
-
-# Install dependencies (first time only)
-npm install
-
-# Start development server with proxy
-ng serve
-
-# Frontend available at: http://localhost:4200
-# Proxy routes /api/* to backend services
-```
-
-**Local Development Notes:**
-- Update `application.properties` in each service to point to your local MongoDB
-- Default MongoDB connection: `mongodb://localhost:27017/{dbname}`
-- Install MongoDB locally or use MongoDB Atlas (cloud)
-- Kafka is optional for local development
-
----
-
-### **Option 3: Hybrid (Docker Backend + Local Frontend)**
-
-Run backend in Docker, frontend locally for faster Angular development:
-
-```powershell
-# 1. Start backend services only
-docker-compose up -d user-service product-service media-service mongodb-user mongodb-product mongodb-media
-
-# 2. Start Angular with live reload
-cd frontend
-npm install
-ng serve
-
-# 3. Make frontend changes - auto-reloads instantly
-# Backend changes require: docker-compose restart <service-name>
-```
-
----
-
-## 🔍 Service Access Points
-
-| Service | URL | Description |
-|---------|-----|-------------|
-| **Jenkins CI/CD** | http://localhost:8090 | Jenkins automation server (admin/admin123) |
-| **Frontend** | http://localhost:4200 | Angular UI (login, register, products, dashboard) |
-| **User Service** | http://localhost:8081 | Authentication, profile management |
-| **Product Service** | http://localhost:8082 | Product CRUD operations |
-| **Media Service** | http://localhost:8083 | Image upload & serving |
-| **API Gateway** | http://localhost:8080 | Centralized API routing |
-| **MongoDB User** | mongodb://localhost:27017 | User database |
-| **MongoDB Product** | mongodb://localhost:27018 | Product database |
-| **MongoDB Media** | mongodb://localhost:27019 | Media metadata database |
-
----
-
-## 🧪 Testing the Application
-
-### **1. Quick Health Check**
-```powershell
-# Test if services are responding
-Invoke-RestMethod -Uri "http://localhost:8081/actuator/health"  # User Service
-Invoke-RestMethod -Uri "http://localhost:8082/actuator/health"  # Product Service
-Invoke-RestMethod -Uri "http://localhost:4200"                  # Frontend
-```
-
-### **2. Manual Testing (Browser)**
-1. Open http://localhost:4200
-2. Click **Register** → Fill in details → Submit
-3. Login with registered credentials
-4. Navigate to **Dashboard** (sellers only)
-5. Create a product with image upload
-6. View products in **Products** page
-
-### **3. Automated Testing**
-
-**Run Backend Tests:**
+- Access Jenkins at: http://localhost:8090
+- Configure SonarQube connection in Jenkins settings
+- Create pipelines using `Jenkinsfile.sonarqube` for each service
+
+### 3. Start Application Services
 ```bash
-# User Service
-cd user-service
-mvn test                                    # Run unit tests
-mvn verify                                  # Run integration tests
-open target/site/jacoco/index.html          # View coverage report
+docker-compose up -d
+```
+- API Gateway: http://localhost:8080
+- Frontend: http://localhost:4200
 
-# Product Service
-cd product-service
-mvn test
-open target/site/jacoco/index.html
+## 📊 SonarQube Integration
 
-# All services generate reports in:
-# - target/surefire-reports/*.xml          (JUnit XML)
-# - target/site/jacoco/                    (Coverage HTML)
+### Features
+- **Automated Code Analysis** - Every Jenkins build triggers SonarQube scan
+- **Quality Gates** - Build fails if quality criteria not met
+- **Code Coverage Tracking** - JaCoCo integration with 50% minimum threshold
+- **Security Vulnerability Detection** - OWASP security analysis
+- **Technical Debt Calculation** - Maintainability ratings
+- **Multi-Project Dashboard** - Separate analysis for each microservice
+
+### Pre-configured Projects
+Each service has dedicated SonarQube configuration:
+- `ecommerce-api-gateway` - API Gateway analysis
+- `ecommerce-user-service` - User service analysis
+- `ecommerce-product-service` - Product service analysis
+- `ecommerce-media-service` - Media service analysis
+- `ecommerce-frontend` - Angular frontend analysis
+
+### Running Code Analysis
+
+**Via Jenkins Pipeline (Recommended):**
+- Use `Jenkinsfile.sonarqube` for integrated analysis
+- Automatic quality gate validation
+- Build artifacts and coverage reports uploaded
+
+**Manual Analysis:**
+```bash
+cd api-gateway  # or any service directory
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=ecommerce-api-gateway \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=your-token-here
 ```
 
-**Run Frontend Tests:**
+## 🔧 Jenkins CI/CD Pipeline
+
+### Pipeline Capabilities
+- ✅ **Automated Testing** - JUnit (Java) + Jasmine/Karma (Angular)
+- ✅ **SonarQube Analysis** - Code quality gates enforced
+- ✅ **Code Coverage** - JaCoCo with threshold validation
+- ✅ **Blue-Green Deployment** - Zero-downtime deployments with rollback
+- ✅ **Multi-Environment** - Dev, staging, production configurations
+- ✅ **GitHub Integration** - Webhook-triggered builds
+- ✅ **Email & Slack Notifications** - Build status alerts
+
+### Pipeline Files
+- `Jenkinsfile` - Standard CI/CD pipeline
+- `Jenkinsfile.sonarqube` - Enhanced pipeline with SonarQube integration
+- `Jenkinsfile.fullstack` - Full-stack deployment pipeline
+
+## 🏗️ Architecture
+
+### Microservices (Java 21 + Spring Boot 3.2.0)
+| Service | Port | Description |
+|---------|------|-------------|
+| **API Gateway** | 8080 | Request routing and centralized entry point |
+| **User Service** | 8081 | Authentication, user management, JWT |
+| **Product Service** | 8082 | Product CRUD, seller authorization |
+| **Media Service** | 8083 | Image upload and storage |
+| **Frontend** | 4200 | Angular 17 web application |
+
+### Infrastructure Components
+| Component | Port | Purpose |
+|-----------|------|---------|
+| **SonarQube** | 9000 | Code quality analysis platform |
+| **PostgreSQL** | 5432 | SonarQube database |
+| **Jenkins** | 8090 | CI/CD automation server |
+| **MongoDB (User)** | 27017 | User service database |
+| **MongoDB (Product)** | 27018 | Product service database |
+| **MongoDB (Media)** | 27019 | Media service database |
+| **Kafka** | 9092 | Event streaming platform |
+| **Zookeeper** | 2181 | Kafka coordination |
+
+### Technology Stack
+- **Backend**: Java 21, Spring Boot 3.2.0, Spring Security, MongoDB, Kafka
+- **Frontend**: Angular 17, TypeScript, RxJS
+- **DevOps**: Jenkins, SonarQube, Docker, Docker Compose
+- **Testing**: JUnit 5, Jasmine, Karma, JaCoCo
+- **Security**: JWT, BCrypt, Role-based access control
+- **Quality**: SonarQube, JaCoCo code coverage, OWASP dependency check
+
+## ✨ Key Features
+
+### DevOps & Quality Assurance
+- **SonarQube Code Analysis** - Automated quality gates with every build
+- **Code Coverage Tracking** - JaCoCo integration with 50% minimum threshold
+- **Security Scanning** - OWASP dependency vulnerability detection
+- **Automated Testing** - Unit, integration, and E2E tests
+- **CI/CD Pipeline** - Fully automated build, test, and deployment
+- **Blue-Green Deployment** - Zero-downtime deployments with rollback capability
+- **Docker Containerization** - Complete infrastructure as code
+
+### Application Features
+- **User Management** - Registration, authentication (JWT), profile management
+- **Product Management** - CRUD operations with seller authorization
+- **Media Management** - Image upload with validation (2MB limit, type checking)
+- **Role-Based Access** - CLIENT and SELLER roles with authorization
+- **API Gateway** - Centralized routing and request orchestration
+- **Event-Driven Architecture** - Kafka messaging for service communication
+
+## 📋 Prerequisites
+
+- Docker & Docker Compose
+- Java 21 (for local development)
+- Maven 3.9+ (for local development)
+- Node.js 18+ (for frontend development)
+- Git
+
+## 🔍 Code Quality Standards
+
+### Enforced Quality Gates
+- **Code Coverage**: Minimum 50% (JaCoCo)
+- **Duplicated Code**: < 3%
+- **Code Smells**: Maintainability rating A
+- **Security Hotspots**: Must be reviewed
+- **Bugs**: Zero blocking/critical bugs
+- **Vulnerabilities**: Zero high/critical vulnerabilities
+
+### SonarQube Configuration
+Each service includes:
+- `sonar-project.properties` - Project-specific SonarQube settings
+- `Jenkinsfile.sonarqube` - Pipeline with analysis integration
+- Coverage exclusions for configuration/exception classes
+- Binary paths for accurate analysis
+
+## 🧪 Testing & Coverage
+
+### Test Reports
+- **JUnit XML Reports** - Detailed test execution results
+- **JaCoCo Coverage** - HTML and XML coverage reports
+- **Frontend Coverage** - Istanbul/Karma coverage reports
+- **Historical Tracking** - Jenkins archives all test results
+
+### Running Tests Locally
+
+**Backend Services:**
+```bash
+cd api-gateway  # or any service
+mvn clean test  # Unit tests only
+mvn clean verify  # Unit + integration tests with coverage
+```
+
+**Frontend:**
 ```bash
 cd frontend
-npm run test                                # Interactive mode
-npm run test:ci                             # CI mode (headless)
-open coverage/index.html                    # View coverage report
+npm test  # Karma tests
+npm run test:coverage  # With coverage report
 ```
 
-**View Reports in Jenkins:**
-- Test Results: http://localhost:8090/job/<service-name>/<build>/testReport/
-- Coverage: http://localhost:8090/job/<service-name>/<build>/jacoco/
-- Full Documentation: See [TEST_REPORTING.md](TEST_REPORTING.md)
+## 🚀 Deployment
 
----
+### Local Development
+```bash
+# Start all infrastructure
+docker-compose up -d
 
-## 🛠️ Development Workflow
-
-### **Making Backend Changes**
-
-```powershell
-# Option A: With Docker
+# Build and run individual service
 cd user-service
-# Make code changes...
-cd ..
-docker-compose up --build -d user-service  # Rebuilds only user-service
-
-# Option B: Without Docker
-cd user-service
-# Make code changes...
-mvn clean install -DskipTests
-mvn spring-boot:run  # Restart Maven process
+mvn spring-boot:run
 ```
 
-### **Making Frontend Changes**
+### Production Deployment (via Jenkins)
+1. Push code to GitHub repository
+2. Jenkins webhook triggers build automatically
+3. Pipeline executes:
+   - Checkout code
+   - Build service
+   - Run tests
+   - SonarQube analysis
+   - Quality gate validation
+   - Docker image build
+   - Blue-green deployment
+4. Notifications sent on success/failure
 
-```powershell
-cd frontend
-# Make code changes in src/...
-# Angular auto-reloads (no restart needed with ng serve)
+## 📁 Project Structure
 
-# Build for production
-ng build --configuration production
-# Output: frontend/dist/frontend/browser/
+```
+safe-zone/
+├── api-gateway/           # API Gateway service
+│   ├── Jenkinsfile       # CI/CD pipeline
+│   ├── Jenkinsfile.sonarqube  # Pipeline with SonarQube
+│   └── sonar-project.properties
+├── user-service/         # User management service
+├── product-service/      # Product management service
+├── media-service/        # Media/image service
+├── frontend/             # Angular web application
+├── deployment/           # DevOps infrastructure
+│   ├── docker-compose.jenkins.yml
+│   ├── docker-compose.sonarqube.yml
+│   ├── start-jenkins.sh
+│   ├── start-sonarqube.sh
+│   └── Jenkinsfile.fullstack
+└── docker-compose.yml    # Application services
 ```
 
-### **Database Management**
+## 🔧 Configuration
 
-```powershell
-# Connect to MongoDB containers
-docker exec -it mongodb-user mongosh
-docker exec -it mongodb-product mongosh
-docker exec -it mongodb-media mongosh
+### SonarQube Setup
+1. Start SonarQube: `cd deployment && ./start-sonarqube.sh`
+2. Access: http://localhost:9000 (admin/admin)
+3. Generate authentication token: User > My Account > Security
+4. Configure in Jenkins: Manage Jenkins > Configure System > SonarQube servers
 
-# Inside mongosh:
-show dbs                    # List databases
-use userdb                  # Switch to userdb
-db.users.find().pretty()    # View users
-db.users.deleteMany({})     # Clear all users (testing)
-```
+### Jenkins Setup
+1. Start Jenkins: `cd deployment && ./start-jenkins.sh`
+2. Access: http://localhost:8090
+3. Install required plugins: SonarQube Scanner, Docker Pipeline
+4. Configure SonarQube connection (add token)
+5. Create multibranch pipelines for each service
+6. Configure GitHub webhook (optional)
 
----
+## 📊 Monitoring & Reports
 
-## 📦 Build for Production
+### SonarQube Dashboard
+- http://localhost:9000
+- View project-specific quality metrics
+- Track technical debt and code smells
+- Review security vulnerabilities
+- Monitor code coverage trends
 
-### **Backend (Create Executable JARs)**
-```powershell
-# Build all services
-mvn clean package -DskipTests
+### Jenkins Build Reports
+- Test Reports: `${BUILD_URL}testReport/`
+- Coverage Reports: `${BUILD_URL}jacoco/`
+- Build Console: `${BUILD_URL}console`
+- Deployment Status: Pipeline visualization
 
-# JARs created at:
-# user-service/target/user-service-0.0.1-SNAPSHOT.jar
-# product-service/target/product-service-0.0.1-SNAPSHOT.jar
-# media-service/target/media-service-0.0.1-SNAPSHOT.jar
+## 🛠️ Troubleshooting
 
-# Run production JAR
-java -jar user-service/target/user-service-0.0.1-SNAPSHOT.jar
-```
-
-### **Frontend (Production Build)**
-```powershell
-cd frontend
-ng build --configuration production
-
-# Output: frontend/dist/frontend/browser/
-# Deploy these files to nginx, Apache, or CDN
-```
-
-### **Docker Production Images**
-```powershell
-# Build production images
-docker-compose build
-
-# Tag and push to registry
-docker tag buy-01-user-service:latest yourusername/user-service:1.0
-docker push yourusername/user-service:1.0
-```
-
----
-
-## 🐛 Troubleshooting
-
-### **Port Already in Use**
-```powershell
-# Find process using port
-netstat -ano | findstr :8081
-
-# Kill process by PID
-taskkill /PID <PID> /F
-
-# Or change port in application.properties:
-# server.port=8090
-```
-
-### **Docker Containers Not Starting**
-```powershell
+### SonarQube Issues
+```bash
 # Check logs
-docker-compose logs user-service
+docker logs sonarqube
 
-# Remove all containers and volumes (clean slate)
-docker-compose down -v
-docker-compose up --build -d
+# Restart SonarQube
+cd deployment
+./stop-sonarqube.sh
+./start-sonarqube.sh
+
+# For Linux: Fix vm.max_map_count error
+sudo sysctl -w vm.max_map_count=262144
 ```
 
-### **Angular Build Errors**
-```powershell
-# Clear cache and reinstall
-cd frontend
-rm -r -fo node_modules
-rm package-lock.json
-npm install
-ng serve
+### Jenkins Issues
+```bash
+# Check logs
+docker logs jenkins
+
+# Restart Jenkins
+cd deployment
+./stop-jenkins.sh
+./start-jenkins.sh
 ```
 
-### **MongoDB Connection Failed**
-```powershell
-# Check if MongoDB is running
-docker ps | Select-String mongodb
+### Application Issues
+```bash
+# View service logs
+docker-compose logs -f user-service
 
-# Restart MongoDB
-docker-compose restart mongodb-user
+# Restart services
+docker-compose restart
 
-# Check connection string in application.properties:
-# spring.data.mongodb.uri=mongodb://mongodb-user:27017/userdb
+# Clean restart
+docker-compose down
+docker-compose up -d
 ```
 
-### **Backend Service Crashes**
-```powershell
-# Check Java version
-java -version  # Must be 21.x
+## 📚 Documentation
 
-# Check logs for errors
-docker logs user-service --tail 50
+- **SonarQube Documentation**: https://docs.sonarqube.org/
+- **Jenkins Pipeline**: https://www.jenkins.io/doc/book/pipeline/
+- **Spring Boot**: https://docs.spring.io/spring-boot/
+- **Angular**: https://angular.io/docs
 
-# Common issue: MongoDB not ready
-# Wait 30 seconds and restart: docker-compose restart user-service
-```
+## 👥 Contributing
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Ensure tests pass: `mvn clean verify`
+4. Ensure SonarQube quality gates pass
+5. Commit changes: `git commit -m 'Add amazing feature'`
+6. Push to branch: `git push origin feature/amazing-feature`
+7. Open Pull Request
+
+## 📝 License
+
+This project is for educational and demonstration purposes.
+
+## 🙋 Support
+
+For issues, questions, or contributions, please open an issue in the GitHub repository.
 
 ---
 
-## 🎯 Next Steps
-
-- ✅ **Backend Services**: Complete with comprehensive testing
-- ✅ **Frontend**: Angular implementation complete
-- ✅ **CI/CD Pipeline**: Jenkins automation with test reporting
-- ✅ **Test Coverage**: All services configured with JaCoCo
-- 🔄 **Future Enhancements**: Additional integration tests, E2E testing, performance monitoring
-
-## API Endpoints
-
-### User Service
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/profile` - Get current user profile (auth required)
-- `PUT /api/auth/profile` - Update profile (auth required)
-- `POST /api/auth/avatar` - Upload avatar (seller only)
-
-### Product Service
-- `GET /api/products` - Get all products
-- `POST /api/products` - Create product (seller only)
-- `PUT /api/products/{id}` - Update product (owner only)
-- `DELETE /api/products/{id}` - Delete product (owner only)
-
-### Media Service
-- `POST /api/media/upload` - Upload media (seller only)
-- `GET /api/media/{id}` - Get media by ID
-- `DELETE /api/media/{id}` - Delete media (owner only)
-
-## Testing with Postman
-
-1. **Register as Seller**
-```json
-POST /api/auth/register
-{
-  "email": "seller@example.com",
-  "password": "password123",
-  "firstName": "John",
-  "lastName": "Seller",
-  "role": "SELLER"
-}
-```
-
-2. **Login** to get JWT token
-
-3. **Create Product** with Bearer token
-
-4. **Upload Image** with product ID
-
-## License
-
-MIT License# CI/CD Pipeline Status: ✅ Build #11 Successful - Thu Jan  8 20:32:18 EET 2026
+**Built with ❤️ to demonstrate professional DevOps practices with SonarQube and Jenkins**
